@@ -1,0 +1,64 @@
+{
+  "total_scenarios": 180,
+  "valid_scenarios": 60,
+  "invalid_scenarios": 120,
+  "validator_metrics": {
+    "price_validator": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "tp": 38,
+      "fp": 0,
+      "tn": 142,
+      "fn": 0
+    },
+    "inventory_validator": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "tp": 35,
+      "fp": 0,
+      "tn": 145,
+      "fn": 0
+    },
+    "policy_validator": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "tp": 36,
+      "fp": 0,
+      "tn": 144,
+      "fn": 0
+    },
+    "budget_validator": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "tp": 30,
+      "fp": 0,
+      "tn": 150,
+      "fn": 0
+    },
+    "authorization_validator": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "false_positive_rate": 0.0,
+      "false_negative_rate": 0.0,
+      "tp": 35,
+      "fp": 0,
+      "tn": 145,
+      "fn": 0
+    }
+  },
+  "precision": 1.0,
+  "recall": 1.0,
+  "false_positive_rate": 0.0,
+  "false_negative_rate": 0.0,
+  "invalid_marked_pass": 0,
+  "invalid_marked_pass_details": [],
+  "accuracy": 1.0
+}
