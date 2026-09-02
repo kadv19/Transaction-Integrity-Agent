@@ -128,10 +128,10 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator",
-      "authorization_validator"
+      "intent_alignment_validator",
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: budget_validator, authorization_validator, authorization_validator"
+    "description": "Combined failures: budget_validator, intent_alignment_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0004",
@@ -348,9 +348,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b91739.49 < final \u20b92356.98 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b91739.49 < final \u20b92356.98 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0009",
@@ -572,10 +572,10 @@
     "expected_failures": [
       "price_validator",
       "budget_validator",
-      "authorization_validator",
-      "authorization_validator"
+      "intent_alignment_validator",
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: price_validator, budget_validator, authorization_validator, authorization_validator"
+    "description": "Combined failures: price_validator, budget_validator, intent_alignment_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0014",
@@ -661,10 +661,10 @@
     "expected_failures": [
       "price_validator",
       "budget_validator",
-      "authorization_validator",
-      "authorization_validator"
+      "intent_alignment_validator",
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: price_validator, budget_validator, authorization_validator, authorization_validator"
+    "description": "Combined failures: price_validator, budget_validator, intent_alignment_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0016",
@@ -800,9 +800,9 @@
     "expected_failures": [
       "inventory_validator",
       "policy_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: inventory_validator, policy_validator, authorization_validator"
+    "description": "Combined failures: inventory_validator, policy_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0019",
@@ -887,9 +887,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b92323.92 < final \u20b93786.99 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b92323.92 < final \u20b93786.99 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0021",
@@ -974,9 +974,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b9183171.12 < final \u20b9207420.92 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b9183171.12 < final \u20b9207420.92 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0023",
@@ -1061,9 +1061,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b910155.42 < final \u20b914437.71 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b910155.42 < final \u20b914437.71 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0025",
@@ -1109,9 +1109,9 @@
     "expected_failures": [
       "price_validator",
       "policy_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: price_validator, policy_validator, authorization_validator"
+    "description": "Combined failures: price_validator, policy_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0026",
@@ -1546,9 +1546,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b912771.22 < final \u20b917896.78 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b912771.22 < final \u20b917896.78 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0036",
@@ -1814,9 +1814,9 @@
     },
     "expected_failures": [
       "policy_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: policy_validator, authorization_validator"
+    "description": "Combined failures: policy_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0042",
@@ -1901,9 +1901,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b99883.96 < final \u20b913500.25 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b99883.96 < final \u20b913500.25 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0044",
@@ -2122,9 +2122,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b92050.68 < final \u20b92350.81 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b92050.68 < final \u20b92350.81 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0049",
@@ -2257,9 +2257,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b92573.78 < final \u20b93025.99 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b92573.78 < final \u20b93025.99 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0052",
@@ -2904,9 +2904,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b91430.92 < final \u20b92130.31 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b91430.92 < final \u20b92130.31 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0067",
@@ -2950,10 +2950,10 @@
     "expected_failures": [
       "inventory_validator",
       "budget_validator",
-      "authorization_validator",
-      "authorization_validator"
+      "intent_alignment_validator",
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: inventory_validator, budget_validator, authorization_validator, authorization_validator"
+    "description": "Combined failures: inventory_validator, budget_validator, intent_alignment_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0068",
@@ -2996,9 +2996,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b98335.06 < final \u20b912562.11 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b98335.06 < final \u20b912562.11 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0069",
@@ -3083,9 +3083,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b93801.05 < final \u20b96982.82 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b93801.05 < final \u20b96982.82 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0071",
@@ -3695,9 +3695,9 @@
       "inventory_validator",
       "policy_validator",
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: inventory_validator, policy_validator, budget_validator, authorization_validator"
+    "description": "Combined failures: inventory_validator, policy_validator, budget_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0085",
@@ -3740,9 +3740,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b920823.75 < final \u20b924508.72 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b920823.75 < final \u20b924508.72 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0086",
@@ -4139,9 +4139,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b941798.00 < final \u20b959612.42 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b941798.00 < final \u20b959612.42 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0095",
@@ -4272,10 +4272,10 @@
     "expected_failures": [
       "price_validator",
       "budget_validator",
-      "authorization_validator",
-      "authorization_validator"
+      "intent_alignment_validator",
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: price_validator, budget_validator, authorization_validator, authorization_validator"
+    "description": "Combined failures: price_validator, budget_validator, intent_alignment_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0098",
@@ -4928,9 +4928,9 @@
     },
     "expected_failures": [
       "policy_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: policy_validator, authorization_validator"
+    "description": "Combined failures: policy_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0113",
@@ -5324,9 +5324,9 @@
     "expected_failures": [
       "policy_validator",
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: policy_validator, budget_validator, authorization_validator"
+    "description": "Combined failures: policy_validator, budget_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0122",
@@ -5539,9 +5539,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b93404.72 < final \u20b95008.95 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b93404.72 < final \u20b95008.95 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0127",
@@ -5806,9 +5806,9 @@
     },
     "expected_failures": [
       "policy_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: policy_validator, authorization_validator"
+    "description": "Combined failures: policy_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0133",
@@ -5854,9 +5854,9 @@
     "expected_failures": [
       "policy_validator",
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: policy_validator, budget_validator, authorization_validator"
+    "description": "Combined failures: policy_validator, budget_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0134",
@@ -5941,9 +5941,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b93512.87 < final \u20b94073.64 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b93512.87 < final \u20b94073.64 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0136",
@@ -6200,9 +6200,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b919111.51 < final \u20b931900.50 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b919111.51 < final \u20b931900.50 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0142",
@@ -6773,9 +6773,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b92760.27 < final \u20b95294.94 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b92760.27 < final \u20b95294.94 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0155",
@@ -6904,9 +6904,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b94752.91 < final \u20b99184.77 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b94752.91 < final \u20b99184.77 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0158",
@@ -7256,10 +7256,10 @@
     "expected_failures": [
       "inventory_validator",
       "budget_validator",
-      "authorization_validator",
-      "authorization_validator"
+      "intent_alignment_validator",
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: inventory_validator, budget_validator, authorization_validator, authorization_validator"
+    "description": "Combined failures: inventory_validator, budget_validator, intent_alignment_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0166",
@@ -7347,9 +7347,9 @@
     "expected_failures": [
       "inventory_validator",
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Combined failures: inventory_validator, budget_validator, authorization_validator"
+    "description": "Combined failures: inventory_validator, budget_validator, intent_alignment_validator"
   },
   {
     "scenario_id": "0168",
@@ -7664,9 +7664,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b966136.68 < final \u20b973485.96 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b966136.68 < final \u20b973485.96 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0175",
@@ -7883,9 +7883,9 @@
     },
     "expected_failures": [
       "budget_validator",
-      "authorization_validator"
+      "intent_alignment_validator"
     ],
-    "description": "Budget \u20b9602835.74 < final \u20b9743810.93 \u2014 budget & authorization validators should fail"
+    "description": "Budget \u20b9602835.74 < final \u20b9743810.93 \u2014 budget & intent alignment validators should fail"
   },
   {
     "scenario_id": "0180",

@@ -23,7 +23,7 @@ ValidatorName = Literal[
     "inventory_validator",
     "policy_validator",
     "budget_validator",
-    "authorization_validator",
+    "intent_alignment_validator",
 ]
 
 
@@ -86,8 +86,8 @@ def get_actual_failures(state: TransactionState) -> list[ValidatorName]:
         failures.append("policy_validator")
     if not vr.budget_validator:
         failures.append("budget_validator")
-    if not vr.authorization_validator:
-        failures.append("authorization_validator")
+    if not vr.intent_alignment_validator:
+        failures.append("intent_alignment_validator")
     return failures
 
 
@@ -138,7 +138,7 @@ def run_benchmark(scenarios: list[Scenario]) -> BenchmarkReport:
         "inventory_validator",
         "policy_validator",
         "budget_validator",
-        "authorization_validator",
+        "intent_alignment_validator",
     ]
 
     validator_metrics = {}

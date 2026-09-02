@@ -43,7 +43,7 @@
       "tn": 150,
       "fn": 0
     },
-    "authorization_validator": {
+    "intent_alignment_validator": {
       "precision": 1.0,
       "recall": 1.0,
       "false_positive_rate": 0.0,

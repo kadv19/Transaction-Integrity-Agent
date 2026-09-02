@@ -7,15 +7,10 @@ replayable decision — no hidden context, no LLM-influenced flags.
 
 from __future__ import annotations
 
-from typing import Annotated, Literal
+from typing import Literal
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 from typing_extensions import Self
-
-
-def _append_only_reducer(current: list[str], new: list[str]) -> list[str]:
-    """Reducer for audit_trail: append-only, never overwrite."""
-    return current + new
 
 
 class CatalogRecord(BaseModel):
@@ -67,7 +62,7 @@ class ValidationResults(BaseModel):
     inventory_validator: bool = False
     policy_validator: bool = False
     budget_validator: bool = False
-    authorization_validator: bool = False
+    intent_alignment_validator: bool = False
 
 
 class TransactionState(BaseModel):
@@ -96,12 +91,18 @@ class TransactionState(BaseModel):
 
     # --- Validation Outcomes ---
     validation_results: ValidationResults | None = None
-    audit_trail: Annotated[list[str], Field(default_factory=list)]
+    audit_trail: list[str] = Field(default_factory=list)
     is_violation_detected: bool = False
 
     # --- Loop Control (Recovery Agent) ---
     loop_count: int = 0
     MAX_LOOPS: int = 3
+
+    # --- Track products already tried in this run ---
+    tried_product_ids: list[str] = Field(default_factory=list)
+
+    # --- Debug flags (test-only) ---
+    force_stockout_first: bool = False
 
     # --- Final Decision ---
     final_decision: Literal["PASS", "FAIL", "PENDING"] = "PENDING"
@@ -110,7 +111,7 @@ class TransactionState(BaseModel):
 
     # --- Field Validators (enforce CORE DESIGN LAW) ---
 
-    @field_validator("validation_results", mode="before")
+    @field_validator("validation_results")
     @classmethod
     def _coerce_validation_results(cls, v):
         """Accept dict or ValidationResults, normalize to model."""
@@ -141,7 +142,7 @@ class TransactionState(BaseModel):
                 vr.inventory_validator,
                 vr.policy_validator,
                 vr.budget_validator,
-                vr.authorization_validator,
+                vr.intent_alignment_validator,
             ]
         )
 

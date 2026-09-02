@@ -14,7 +14,7 @@ from dataclasses import dataclass
 from typing import Literal
 from pathlib import Path
 
-from state import (
+from src.state import (
     CatalogRecord,
     InventoryRecord,
     CheckoutRecord,
@@ -31,7 +31,7 @@ ValidatorName = Literal[
     "inventory_validator",
     "policy_validator",
     "budget_validator",
-    "authorization_validator",
+    "intent_alignment_validator",
 ]
 
 
@@ -310,8 +310,8 @@ def make_budget_violation_scenario(scenario_id: str) -> Scenario:
         inventory_record=inventory.model_dump(),
         checkout_record=checkout.model_dump(),
         policy_record=policy.model_dump(),
-        expected_failures=["budget_validator", "authorization_validator"],
-        description=f"Budget ₹{budget:.2f} < final ₹{checkout.final_amount:.2f} — budget & authorization validators should fail",
+        expected_failures=["budget_validator", "intent_alignment_validator"],
+        description=f"Budget ₹{budget:.2f} < final ₹{checkout.final_amount:.2f} — budget & intent alignment validators should fail",
     )
 
 
@@ -324,7 +324,7 @@ def make_combined_failure_scenario(scenario_id: str) -> Scenario:
 
     # Combine 2-3 failure types
     failure_types = random.sample(
-        ["price", "inventory", "policy", "budget", "authorization"],
+        ["price", "inventory", "policy", "budget", "intent_alignment"],
         k=random.randint(2, 3)
     )
 
@@ -350,8 +350,8 @@ def make_combined_failure_scenario(scenario_id: str) -> Scenario:
     # Budget violation
     budget = round(checkout.final_amount * random.uniform(0.5, 0.8), 2) if "budget" in failure_types else checkout.final_amount + 5000
 
-    # Authorization violation (intent implies single but quantity > 1)
-    if "authorization" in failure_types:
+    # IntentAlignment violation (intent implies single but quantity > 1)
+    if "intent_alignment" in failure_types:
         intent = f"Buy one {catalog.name.lower()} for personal use"
     else:
         intent = f"Buy {quantity} units of {catalog.name.lower()} under ₹{budget:,.0f}"
@@ -365,10 +365,10 @@ def make_combined_failure_scenario(scenario_id: str) -> Scenario:
         expected.append("policy_validator")
     if "budget" in failure_types:
         expected.append("budget_validator")
-        # Budget mention in intent also triggers authorization validator
-        expected.append("authorization_validator")
-    if "authorization" in failure_types:
-        expected.append("authorization_validator")
+        # Budget mention in intent also triggers intent_alignment_validator
+        expected.append("intent_alignment_validator")
+    if "intent_alignment" in failure_types:
+        expected.append("intent_alignment_validator")
 
     return Scenario(
         scenario_id=scenario_id,

@@ -12,7 +12,7 @@ CORE DESIGN LAW: Only these functions (and deterministic checkout) decide PASS/F
 
 from __future__ import annotations
 
-from state import (
+from src.state import (
     CatalogRecord,
     CheckoutRecord,
     InventoryRecord,
@@ -147,15 +147,17 @@ def budget_validator(
 
 
 # ---------------------------------------------------------------------------
-# 5. AuthorizationValidator
+# 5. IntentAlignmentValidator
 # ---------------------------------------------------------------------------
-def authorization_validator(
+def intent_alignment_validator(
     user_intent: str,
     checkout_record: CheckoutRecord | None,
     max_budget: float,
 ) -> tuple[bool, str | None]:
     """
-    Verify transaction aligns with user's stated spending authorization.
+    Verify the transaction matches what the user's stated intent implied
+    (quantity, mentioned budget) — catches drift between what the user
+    asked for and what the Buyer Agent proposed.
 
     WHY: User intent ("buy one laptop under 50k") may not match what the
     buyer agent proposed ("gaming laptop at 80k"). This catches intent drift.
@@ -210,7 +212,6 @@ def run_all_validators(state: TransactionState) -> TransactionState:
     """
     # Initialize validation_results if not already set
     if state.validation_results is None:
-        from state import ValidationResults
         state.validation_results = ValidationResults()
 
     # PriceValidator
@@ -237,10 +238,10 @@ def run_all_validators(state: TransactionState) -> TransactionState:
     if not passed:
         state.mark_violation(f"BudgetValidator: {reason}")
 
-    # AuthorizationValidator
-    passed, reason = authorization_validator(state.user_intent, state.checkout_record, state.max_budget)
-    state.validation_results.authorization_validator = passed
+    # IntentAlignmentValidator
+    passed, reason = intent_alignment_validator(state.user_intent, state.checkout_record, state.max_budget)
+    state.validation_results.intent_alignment_validator = passed
     if not passed:
-        state.mark_violation(f"AuthorizationValidator: {reason}")
+        state.mark_violation(f"IntentAlignmentValidator: {reason}")
 
     return state
