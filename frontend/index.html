@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transaction Integrity Agent — Live Demo</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: monospace; max-width: 780px; margin: 32px auto; padding: 0 16px; background: #fff; color: #111; line-height: 1.5; }
+  h1 { font-size: 1.35rem; margin: 0 0 4px 0; }
+  .subtitle { color: #555; font-size: 0.9rem; margin-bottom: 20px; }
+  label { display: block; margin: 12px 0 6px; font-weight: bold; font-size: 0.9rem; }
+  input[type="text"] { width: 100%; padding: 10px 12px; font-family: monospace; font-size: 1rem; border: 1px solid #999; border-radius: 4px; }
+  .row { display: flex; align-items: center; gap: 8px; margin: 10px 0; }
+  .row input[type="checkbox"] { width: 18px; height: 18px; }
+  .row label { margin: 0; font-weight: normal; cursor: pointer; user-select: none; }
+  button { margin-top: 10px; padding: 10px 18px; font-family: monospace; font-size: 0.95rem; cursor: pointer; border: 1px solid #111; background: #111; color: #fff; border-radius: 4px; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  button:hover:not(:disabled) { background: #333; }
+  .hint { font-size: 0.8rem; color: #666; margin-top: 6px; }
+  #auditPanel { margin-top: 22px; border: 1px solid #ccc; border-radius: 4px; min-height: 140px; max-height: 360px; overflow-y: auto; padding: 12px; background: #fafafa; font-size: 0.88rem; white-space: pre-wrap; word-break: break-word; }
+  #auditPanel .entry { padding: 4px 0; border-bottom: 1px dotted #ddd; }
+  #auditPanel .entry:last-child { border-bottom: none; }
+  #auditPanel .fallback { color: #8a4b00; font-weight: bold; }
+  #auditPanel .note { color: #6a6a00; font-style: italic; }
+  #auditPanel .violation { color: #b00020; }
+  #statusArea { margin-top: 16px; padding: 12px; border: 1px solid #111; border-radius: 4px; min-height: 44px; font-size: 0.92rem; background: #fff; }
+  #statusArea.pass { border-color: #0a7a00; background: #f0faf0; }
+  #statusArea.fail { border-color: #b00020; background: #fff2f2; }
+  #statusArea a { word-break: break-all; color: #0a4a9a; }
+  .footer { margin-top: 18px; font-size: 0.78rem; color: #888; }
+</style>
+</head>
+<body>
+  <h1>Transaction Integrity Agent — Live Demo</h1>
+  <div class="subtitle">The audit trail is the product, not the UI. One request → full trail revealed staged.</div>
+
+  <label for="userIntent">User request</label>
+  <input id="userIntent" type="text" placeholder='e.g. one book under 3000' value="one book under 3000" autocomplete="off" />
+
+  <div class="row">
+    <input id="forceToggle" type="checkbox" />
+    <label for="forceToggle">Force first candidate out of stock</label>
+  </div>
+  <div class="hint">Check this to reliably trigger the recovery demo path (sets <code>force_stockout_first</code> on TransactionState). Unchecked = normal path.</div>
+
+  <button id="submitBtn">Submit → Run Agent</button>
+  <span id="spinner" style="display:none; margin-left:8px; font-size:0.85rem; color:#555;">running graph…</span>
+  <div class="hint">Backend: <code>POST http://localhost:8000/transact</code> — graph runs synchronously; trail is staged client-side.</div>
+
+  <div id="auditPanel" aria-live="polite"><span style="color:#999;">Audit trail will appear here, one entry every ~300ms.</span></div>
+
+  <div id="statusArea">Final status will appear here after the trail finishes revealing.</div>
+
+  <div class="footer">
+    Tip: Keep network tab open to verify only ONE <code>/transact</code> request is made. No LangGraph streaming — plain staged reveal.
+  </div>
+
+<script>
+(function() {
+  const input = document.getElementById('userIntent');
+  const toggle = document.getElementById('forceToggle');
+  const btn = document.getElementById('submitBtn');
+  const spinner = document.getElementById('spinner');
+  const auditPanel = document.getElementById('auditPanel');
+  const statusArea = document.getElementById('statusArea');
+  const BACKEND = 'http://localhost:8000/transact';
+  const REVEAL_MS = 300;
+
+  function clearStatus() {
+    statusArea.textContent = 'Final status will appear here after the trail finishes revealing.';
+    statusArea.className = '';
+  }
+
+  function showStatus(data) {
+    if (data.final_decision === 'PASS') {
+      statusArea.className = 'pass';
+      const isStub = (data.checkout_link && data.checkout_link.includes('stub.example.com')) || data.razorpay_mode === 'stub_fallback';
+      let html = '<strong style="color:#0a7a00;">PASS</strong> — checkout link: <a href="' + escapeHtml(data.checkout_link) + '" target="_blank" rel="noopener">' + escapeHtml(data.checkout_link) + '</a>';
+      if (isStub) {
+        html += '<br><span style="color:#8a4b00; font-size:0.85rem;">NOTE: stub link used instead of real Razorpay (live keys missing or network fallback) — would be a real Razorpay test-mode link with valid .env.</span>';
+      } else {
+        html += '<br><span style="color:#0a7a00; font-size:0.85rem;">Real Razorpay test-mode link (live)</span>';
+      }
+      if (data.razorpay_fallback_reason) {
+        html += '<br><span style="font-size:0.8rem; color:#555;">Fallback reason: ' + escapeHtml(data.razorpay_fallback_reason) + '</span>';
+      }
+      statusArea.innerHTML = html;
+    } else if (data.final_decision === 'FAIL') {
+      statusArea.className = 'fail';
+      const reason = data.failure_reason || 'No failure reason returned';
+      statusArea.innerHTML = '<strong style="color:#b00020;">FAIL</strong> — ' + escapeHtml(reason);
+    } else {
+      statusArea.className = '';
+      statusArea.textContent = 'Decision: ' + (data.final_decision || 'unknown') + ' — ' + (data.failure_reason || data.checkout_link || '');
+    }
+  }
+
+  function escapeHtml(s) {
+    if (s == null) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function classifyEntry(text) {
+    if (text.startsWith('FALLBACK:')) return 'fallback';
+    if (text.startsWith('NOTE:')) return 'note';
+    if (text.includes('VIOLATION:')) return 'violation';
+    return '';
+  }
+
+  btn.addEventListener('click', async () => {
+    const user_intent = input.value.trim();
+    const force_stockout_first = toggle.checked;
+
+    if (!user_intent) {
+      auditPanel.innerHTML = '<span style="color:#b00020;">Enter a request first.</span>';
+      return;
+    }
+
+    // UI reset
+    btn.disabled = true;
+    btn.textContent = 'Running…';
+    spinner.style.display = 'inline';
+    auditPanel.innerHTML = '';
+    clearStatus();
+
+    let data;
+    try {
+      const res = await fetch(BACKEND, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user_intent, force_stockout_first })
+      });
+      if (!res.ok) {
+        const txt = await res.text();
+        throw new Error('Backend ' + res.status + ': ' + txt);
+      }
+      data = await res.json();
+    } catch (e) {
+      auditPanel.innerHTML = '<span style="color:#b00020;">Request failed: ' + escapeHtml(e.message) + '<br>Is the backend running? <code>uvicorn src.api:app --reload --port 8000</code></span>';
+      statusArea.className = 'fail';
+      statusArea.textContent = 'FAIL — network/backend error: ' + e.message;
+      btn.disabled = false;
+      btn.textContent = 'Submit \u2192 Run Agent';
+      spinner.style.display = 'none';
+      return;
+    }
+
+    const trail = Array.isArray(data.audit_trail) ? data.audit_trail : [];
+    if (trail.length === 0) {
+      auditPanel.innerHTML = '<span style="color:#999;">No audit entries returned.</span>';
+      showStatus(data);
+      btn.disabled = false;
+      btn.textContent = 'Submit \u2192 Run Agent';
+      spinner.style.display = 'none';
+      return;
+    }
+
+    // Staged reveal: one entry every ~300ms
+    let i = 0;
+    function revealNext() {
+      if (i < trail.length) {
+        const entry = document.createElement('div');
+        entry.className = 'entry ' + classifyEntry(trail[i]);
+        entry.textContent = (i+1) + '. ' + trail[i];
+        auditPanel.appendChild(entry);
+        auditPanel.scrollTop = auditPanel.scrollHeight;
+        i++;
+        setTimeout(revealNext, REVEAL_MS);
+      } else {
+        // Done revealing — show final status
+        spinner.style.display = 'none';
+        btn.disabled = false;
+        btn.textContent = 'Submit \u2192 Run Agent';
+        showStatus(data);
+      }
+    }
+    revealNext();
+  });
+
+  // Enter key submits
+  input.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') btn.click();
+  });
+})();
+</script>
+</body>
+</html>

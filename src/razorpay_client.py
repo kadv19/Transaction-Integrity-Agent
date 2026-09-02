@@ -88,7 +88,7 @@ class LiveRazorpayClient(RazorpayClient):
             "customer": {
                 "name": "Test Customer",
                 "email": "test@example.com",
-                "contact": "+919999999999",
+                "contact": "+919876543210",
             },
             "notify": {"sms": False, "email": False},
             "reminder_enable": False,
