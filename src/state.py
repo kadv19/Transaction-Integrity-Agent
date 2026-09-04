@@ -81,6 +81,7 @@ class TransactionState(BaseModel):
     # --- Input / Context ---
     user_intent: str
     max_budget: float  # user's stated maximum spend (INR)
+    min_budget: float = 0.0  # user's stated minimum spend (INR), 0 = no minimum
     proposed_product: CatalogRecord | None = None
 
     # --- Fetched Records (deterministic lookups) ---

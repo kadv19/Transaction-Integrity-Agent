@@ -17,6 +17,7 @@ from src.catalog import (
     _init_catalog,
     _extract_category,
     _extract_max_budget,
+    _extract_min_budget,
     _find_candidate,
 )
 from synthetic_data import (
@@ -55,13 +56,18 @@ def recovery_agent(state: TransactionState) -> TransactionState:
     # Step 2: search for an alternative product
     user_intent = state.user_intent
     max_budget = state.max_budget
+    min_budget = state.min_budget
+    # Also re-extract min in case intent has "more than" not yet parsed (e.g., initial max was 0)
+    if min_budget == 0:
+        min_budget = _extract_min_budget(user_intent, min_budget)
+        state.min_budget = min_budget
     category = _extract_category(user_intent)
 
     # Exclude products already tried in this run, via state field
     tried_ids = set(state.tried_product_ids) if state.tried_product_ids else set()
 
     # Find a candidate excluding tried products
-    candidate = _find_candidate(max_budget, category, tried_ids if tried_ids else None)
+    candidate = _find_candidate(max_budget, category, tried_ids if tried_ids else None, min_budget=min_budget)
 
     if candidate is None:
         # No alternative product found — exhausted this category/budget combo

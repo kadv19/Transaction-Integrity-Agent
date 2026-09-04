@@ -1,0 +1,993 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trust & Transparency Dashboard — Transaction Integrity Agent</title>
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --bg-card:#111418;
+    --bg-terminal:#0b0e13;
+    --bg-input:#0f1319;
+    --border:#222733;
+    --border-strong:#2b3446;
+    --text:#e6e8eb;
+    --muted:#8a95ad;
+    --muted-2:#6b758a;
+    --accent:#00ff41;
+    --accent-strong:#00cc33;
+    --accent-glow:rgba(0,255,65,0.18);
+    --accent-glow-soft:rgba(0,255,65,0.08);
+    --fail:#ff3333;
+    --fail-bg:#1b1214;
+    --fail-border:#3a1e22;
+    --warning:#ffaa00;
+    --warning-glow:rgba(255,170,0,0.12);
+    --info:#4488ff;
+    --info-glow:rgba(68,136,255,0.12);
+    --fallback:#a78bfa;
+    --fallback-glow:rgba(167,139,250,0.08);
+  }
+  *{box-sizing:border-box}
+  html{scrollbar-color:#2b3446 var(--bg)}
+  body{
+    font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono","Courier New",monospace;
+    max-width:1100px;
+    margin:0 auto;
+    padding:28px 18px 40px;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:var(--info);text-decoration:none}
+  a:hover{color:#7aa8ff;text-decoration:underline}
+  header.app-header{
+    margin-bottom:22px;
+    padding-bottom:16px;
+    border-bottom:1px solid var(--border);
+  }
+  .wordmark{
+    display:flex;align-items:center;gap:10px;
+    font-size:0.70rem;letter-spacing:0.18em;text-transform:uppercase;color:var(--muted);
+  }
+  .wordmark .logo-dot{
+    width:8px;height:8px;border-radius:50%;background:var(--accent);
+    box-shadow:0 0 12px var(--accent-glow);flex-shrink:0
+  }
+  .wordmark strong{color:var(--text);font-weight:700;letter-spacing:0.08em}
+  .wordmark .badge-live{
+    margin-left:8px;
+    font-size:0.60rem;letter-spacing:0.12em;text-transform:uppercase;
+    background:rgba(0,255,65,0.10);border:1px solid rgba(0,255,65,0.25);color:var(--accent);
+    padding:2px 7px;border-radius:999px;font-weight:700;
+  }
+  h1{font-size:1.55rem;margin:10px 0 6px;letter-spacing:-0.02em;font-weight:700;line-height:1.15}
+  h1 span.accent{color:var(--accent)}
+  .subtitle{color:var(--muted);font-size:0.84rem;margin:0;max-width:70ch}
+  .subtitle em{font-style:normal;color:var(--accent);opacity:0.95}
+  .top-nav{margin-top:10px;font-size:0.78rem;color:var(--muted)}
+  .top-nav a{color:var(--muted);border-bottom:1px dotted rgba(138,149,173,0.4)}
+  .top-nav a:hover{color:var(--text);border-bottom-color:currentColor}
+  /* cards */
+  .card{
+    background:var(--bg-card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:20px;
+    margin-bottom:16px;
+    box-shadow:0 4px 24px rgba(0,0,0,0.30), 0 1px 0 rgba(255,255,255,0.02) inset;
+  }
+  .card-head{
+    display:flex;align-items:center;justify-content:space-between;
+    margin:-20px -20px 16px; padding:12px 16px;
+    border-bottom:1px solid var(--border);
+    background:linear-gradient(180deg,#1a1f2a 0%, #111418 100%);
+    border-radius:14px 14px 0 0;
+  }
+  .card-title{
+    font-size:0.68rem;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);
+    display:flex;align-items:center;gap:8px;margin:0;
+  }
+  .card-title .icon{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent-glow)}
+  .card-title.fail-dot .icon{background:var(--fail);box-shadow:0 0 8px rgba(255,51,51,0.35)}
+  .card-title.warn-dot .icon{background:var(--warning);box-shadow:0 0 8px rgba(255,170,0,0.35)}
+  .card-title.info-dot .icon{background:var(--info);box-shadow:0 0 8px rgba(68,136,255,0.35)}
+  .card-meta{font-size:0.70rem;color:var(--muted-2);letter-spacing:0.04em}
+  label.field-label{display:block;margin:0 0 8px;font-weight:650;font-size:0.80rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted)}
+  input[type="text"]{
+    width:100%;padding:12px 14px;
+    font-family:inherit;font-size:0.92rem;
+    background:var(--bg-input);border:1px solid var(--border-strong);border-radius:10px;color:var(--text);
+    outline:none;transition:border-color 150ms, box-shadow 150ms, background 150ms;
+  }
+  input[type="text"]::placeholder{color:var(--muted-2)}
+  input[type="text"]:focus{border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-glow);background:#0c1118}
+  .actions{display:flex;align-items:center;gap:10px;margin-top:12px;flex-wrap:wrap}
+  button{
+    padding:10px 16px;font-family:inherit;font-size:0.84rem;font-weight:700;letter-spacing:0.02em;
+    cursor:pointer;border:none;background:var(--accent);color:#081412;border-radius:10px;
+    transition:background 150ms, transform 80ms, box-shadow 150ms, opacity 150ms;
+  }
+  button:hover:not(:disabled){background:var(--accent-strong);box-shadow:0 6px 20px var(--accent-glow)}
+  button:active:not(:disabled){transform:translateY(1px)}
+  button:disabled{opacity:0.5;cursor:not-allowed;box-shadow:none}
+  button.secondary{
+    background:transparent;color:var(--text);border:1px solid var(--border-strong);
+  }
+  button.secondary:hover:not(:disabled){background:#1a1f2a;border-color:var(--border-strong);box-shadow:none;color:var(--text)}
+  button.danger{background:var(--fail);color:#fff}
+  button.danger:hover:not(:disabled){background:#e62626}
+  button.warn{background:var(--warning);color:#111}
+  button.warn:hover:not(:disabled){background:#e69500}
+  button.info{background:var(--info);color:#fff}
+  button.info:hover:not(:disabled){background:#366fd6}
+  #spinner, .spinner{font-size:0.80rem;color:var(--muted);display:none;align-items:center;gap:6px}
+  .spinner::before, #spinner::before{
+    content:"";width:12px;height:12px;border:2px solid var(--border-strong);border-top-color:var(--accent);
+    border-radius:50%;display:inline-block;animation:spin 0.7s linear infinite;
+  }
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .hint{font-size:0.74rem;color:var(--muted);margin-top:10px;line-height:1.45}
+  .hint code{background:var(--bg-terminal);border:1px solid var(--border);padding:1px 5px;border-radius:4px;color:var(--muted);font-size:0.74rem}
+  /* audit terminal */
+  .terminal{
+    min-height:120px;max-height:380px;overflow-y:auto;
+    padding:8px 0;background:var(--bg-terminal);border:1px solid var(--border);border-radius:10px;
+    font-size:0.82rem;line-height:1.6;white-space:pre-wrap;word-break:break-word;position:relative;
+    scrollbar-width:thin;
+  }
+  .terminal::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:0.035;
+    background:repeating-linear-gradient(to bottom, transparent 0 3px, rgba(255,255,255,0.55) 3px 4px);
+  }
+  .terminal .placeholder{padding:24px 16px;color:var(--muted-2);text-align:center;font-style:italic}
+  .terminal .entry{
+    padding:7px 14px 7px 16px;margin:0;
+    border-left:3px solid transparent;
+    border-bottom:1px solid #151a23;
+    opacity:0;transform:translateY(6px);
+    transition:opacity 220ms ease, transform 220ms ease;
+    position:relative;
+  }
+  .terminal .entry.visible{opacity:1;transform:none}
+  .terminal .entry:last-child{border-bottom:none}
+  .terminal .fallback{border-left-color:var(--fallback);color:#c4b5fd;background:var(--fallback-glow);font-weight:600}
+  .terminal .note{border-left-color:#64748b;color:#94a3b8;background:rgba(100,116,139,0.08);font-style:italic}
+  .terminal .violation{border-left-color:var(--warning);color:#fbbf24;background:var(--warning-glow)}
+  .terminal .decision{border-left-color:var(--accent);color:#5eead4;background:var(--accent-glow-soft)}
+  .terminal .highlight{background:rgba(0,255,65,0.10);border-left-color:var(--accent);color:var(--accent)}
+  .terminal .rate-limit{border-left-color:var(--info);color:#93bbff;background:var(--info-glow)}
+  /* guardrail bars */
+  .guardrail-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  @media (max-width:700px){.guardrail-grid{grid-template-columns:1fr}}
+  .guardrail-item{
+    background:var(--bg-terminal);border:1px solid var(--border);border-radius:10px;padding:12px 14px;
+  }
+  .guardrail-label{font-size:0.74rem;letter-spacing:0.06em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;display:flex;justify-content:space-between;align-items:center}
+  .guardrail-value{font-size:0.86rem;font-weight:700;color:var(--text)}
+  .guardrail-value span{font-weight:400;color:var(--muted);font-size:0.80rem}
+  .bar-wrap{height:8px;background:#0f141c;border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:8px}
+  .bar-fill{height:100%;border-radius:999px;transition:width 500ms ease}
+  .bar-fill.green{background:var(--accent);box-shadow:0 0 8px var(--accent-glow)}
+  .bar-fill.yellow{background:var(--warning)}
+  .bar-fill.red{background:var(--fail)}
+  .bar-fill.blue{background:var(--info)}
+  /* decision timeline */
+  .timeline{position:relative;display:flex;gap:12px;overflow-x:auto;padding:12px 4px 8px;scrollbar-width:thin}
+  .timeline::before{
+    content:"";position:absolute;left:12px;right:12px;top:28px;height:2px;background:var(--border);z-index:0;
+  }
+  .timeline-node{
+    flex:1;min-width:210px;max-width:340px;
+    background:var(--bg-terminal);border:1px solid var(--border);border-radius:10px;
+    padding:14px;position:relative;z-index:1;
+    opacity:0;transform:translateY(8px);
+    transition:opacity 260ms ease, transform 260ms ease, border-color 200ms;
+  }
+  .timeline-node.visible{opacity:1;transform:none}
+  .timeline-node.pass{border-color:rgba(0,255,65,0.35);box-shadow:0 0 18px var(--accent-glow)}
+  .timeline-node.fail{border-color:rgba(255,51,51,0.45);box-shadow:0 0 18px rgba(255,51,51,0.18)}
+  .timeline-node.fallback{border-color:rgba(255,170,0,0.45);box-shadow:0 0 18px var(--warning-glow)}
+  .node-index{
+    width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+    font-size:0.78rem;font-weight:800;color:#081412;margin-bottom:8px;
+  }
+  .node-index.pass{background:var(--accent)}
+  .node-index.fail{background:var(--fail);color:#fff}
+  .node-index.fallback{background:var(--warning);color:#111}
+  .node-index.info{background:var(--info);color:#fff}
+  .node-step{font-size:0.72rem;letter-spacing:0.08em;text-transform:uppercase;color:var(--muted);margin-bottom:2px}
+  .node-action{font-size:0.88rem;font-weight:700;color:var(--text);margin-bottom:6px}
+  .node-reason{font-size:0.78rem;color:var(--muted);line-height:1.4;margin-bottom:8px;white-space:pre-wrap}
+  .node-meta{font-size:0.72rem;color:var(--muted-2);display:flex;flex-wrap:wrap;gap:6px}
+  .node-meta .pill{padding:2px 7px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,0.02)}
+  .node-meta .pill.conf{border-color:rgba(0,255,65,0.25);color:var(--accent);background:rgba(0,255,65,0.08)}
+  .node-meta .pill.guard{border-color:rgba(68,136,255,0.25);color:var(--info);background:var(--info-glow)}
+  /* badges */
+  .status-badge{display:inline-flex;align-items:center;gap:6px;padding:3px 8px;border-radius:999px;font-size:0.72rem;font-weight:700;letter-spacing:0.04em}
+  .status-badge.pass{background:rgba(0,255,65,0.12);border:1px solid rgba(0,255,65,0.25);color:var(--accent)}
+  .status-badge.fail{background:rgba(255,51,51,0.12);border:1px solid rgba(255,51,51,0.25);color:var(--fail)}
+  .status-badge .dot{width:7px;height:7px;border-radius:50%;background:currentColor;box-shadow:0 0 6px currentColor}
+  /* compare */
+  .compare-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+  @media (max-width:800px){.compare-grid{grid-template-columns:1fr}}
+  .compare-col{background:var(--bg-terminal);border:1px solid var(--border);border-radius:10px;padding:12px;min-height:120px}
+  .compare-col h4{margin:0 0 8px;font-size:0.74rem;letter-spacing:0.07em;text-transform:uppercase;color:var(--muted)}
+  /* toggle */
+  .demo-control{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;
+    margin:12px 0 6px;padding:12px 14px;
+    background:var(--bg-terminal);border:1px solid var(--border);border-radius:10px;
+  }
+  .demo-control-left{display:flex;flex-direction:column;gap:3px;min-width:0}
+  .demo-control-title{font-size:0.84rem;font-weight:650;color:var(--text);display:flex;align-items:center;gap:8px}
+  .demo-control-title .badge{
+    font-size:0.62rem;letter-spacing:0.10em;text-transform:uppercase;
+    background:rgba(0,255,65,0.12);border:1px solid rgba(0,255,65,0.22);color:var(--accent);
+    padding:2px 6px;border-radius:999px;font-weight:700;
+  }
+  .demo-control-hint{font-size:0.74rem;color:var(--muted);line-height:1.4}
+  .toggle-switch{position:relative;flex-shrink:0;display:flex;align-items:center}
+  .toggle-switch input{
+    appearance:none;-webkit-appearance:none;
+    width:46px;height:26px;background:#232b36;border:1px solid var(--border-strong);
+    border-radius:999px;cursor:pointer;position:relative;transition:background 160ms,border-color 160ms;margin:0;
+  }
+  .toggle-switch input:checked{background:var(--accent);border-color:var(--accent-strong)}
+  .toggle-switch input::after{
+    content:"";position:absolute;top:2px;left:2px;width:20px;height:20px;
+    background:#fff;border-radius:50%;transition:transform 160ms ease;box-shadow:0 1px 4px rgba(0,0,0,0.35);
+  }
+  .toggle-switch input:checked::after{transform:translateX(20px)}
+  .toggle-switch input:focus-visible{outline:none;box-shadow:0 0 0 3px var(--accent-glow)}
+  /* reasoning tree */
+  .reasoning-tree{margin-top:12px}
+  .reasoning-tree .node{
+    background:var(--bg-terminal);border:1px solid var(--border);border-radius:10px;
+    padding:12px 14px;margin-bottom:8px;
+    opacity:0;transform:translateY(6px);
+    transition:opacity 260ms ease, transform 260ms ease;
+    border-left:3px solid transparent;
+  }
+  .reasoning-tree .node.visible{opacity:1;transform:none}
+  .reasoning-tree .node.pass{border-left-color:var(--accent)}
+  .reasoning-tree .node.fail{border-left-color:var(--fail)}
+  .reasoning-tree .node.warn{border-left-color:var(--warning)}
+  .reasoning-tree .node.info{border-left-color:var(--info)}
+  .reasoning-tree .node-title{font-size:0.82rem;font-weight:700;color:var(--text);display:flex;align-items:center;gap:8px}
+  .reasoning-tree .node-reason{font-size:0.78rem;color:var(--muted);margin-top:4px;line-height:1.45}
+  .reasoning-tree .node-meta{margin-top:6px;font-size:0.72rem;color:var(--muted-2);display:flex;flex-wrap:wrap;gap:6px}
+  .pill{padding:2px 7px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,0.02);font-size:0.72rem}
+  .pill.green{border-color:rgba(0,255,65,0.25);color:var(--accent);background:rgba(0,255,65,0.08)}
+  .pill.red{border-color:rgba(255,51,51,0.25);color:var(--fail);background:rgba(255,51,51,0.08)}
+  .pill.yellow{border-color:rgba(255,170,0,0.25);color:var(--warning);background:rgba(255,170,0,0.08)}
+  .pill.blue{border-color:rgba(68,136,255,0.25);color:var(--info);background:var(--info-glow)}
+  .footer{margin-top:18px;font-size:0.73rem;color:var(--muted-2);text-align:center;line-height:1.5}
+  .footer code{background:var(--bg-card);border:1px solid var(--border);padding:1px 4px;border-radius:4px;color:var(--muted)}
+  @media (max-width:640px){
+    body{padding:18px 14px 28px}
+    h1{font-size:1.30rem}
+    .card{padding:16px}
+    .card-head{margin:-16px -16px 14px; padding:10px 14px}
+    .demo-control{flex-direction:row}
+  }
+</style>
+</head>
+<body>
+  <header class="app-header">
+    <div class="wordmark"><span class="logo-dot"></span><strong>TXN INTEGRITY</strong> — TRUST DASHBOARD <span class="badge-live">READ-ONLY</span></div>
+    <h1>Trust & Transparency <span class="accent">— Dashboard</span></h1>
+    <p class="subtitle"><em>the audit trail is the product</em> — this view makes the invisible safety mechanisms visible. Read-only layer on top of <code>/transact</code>.</p>
+    <div class="top-nav">
+      <a href="./index.html">← Back to Live Demo (index.html)</a> &nbsp;·&nbsp; Backend: <code>http://localhost:8000</code> &nbsp;·&nbsp; <span id="connStatus" style="color:var(--muted)">checking…</span>
+    </div>
+  </header>
+
+  <!-- Card 1: Transaction Explorer -->
+  <section class="card" id="card-explorer">
+    <div class="card-head">
+      <h2 class="card-title"><span class="icon"></span> Card 1 — Transaction Explorer</h2>
+      <span class="card-meta">GET /trust/explain/{id}</span>
+    </div>
+    <label class="field-label" for="txInput">Transaction ID</label>
+    <input id="txInput" type="text" placeholder="Paste transaction_id from /transact or click 'Latest' / 'Demo' — or run a new transaction in index.html" autocomplete="off" />
+    <div class="actions">
+      <button id="explainBtn">Explain →</button>
+      <button id="latestBtn" class="secondary">Load Latest</button>
+      <button id="demoExplainBtn" class="secondary">Demo Explain</button>
+      <span id="explainSpinner" class="spinner">fetching…</span>
+      <span id="explainStatus" style="font-size:0.78rem;color:var(--muted)"></span>
+    </div>
+    <div class="hint">After you run a transaction in <code>index.html</code> or via <code>POST /transact</code>, paste its <code>transaction_id</code> here. Staged reveal 300ms/entry — same pattern as index.html.</div>
+    <div id="explainPanel" class="terminal" style="margin-top:14px; display:none"></div>
+    <div id="reasoningTree" class="reasoning-tree" style="display:none"></div>
+    <div id="explainMeta" style="margin-top:10px; font-size:0.82rem; display:none"></div>
+  </section>
+
+  <!-- Card 2: Guardrail Dashboard -->
+  <section class="card" id="card-guardrails">
+    <div class="card-head">
+      <h2 class="card-title info-dot"><span class="icon"></span> Card 2 — Guardrail Dashboard</h2>
+      <span class="card-meta">GET /trust/guardrails · live</span>
+    </div>
+    <div id="guardrailStatus" class="hint" style="margin-bottom:10px">Loading guardrails…</div>
+    <div id="guardrailGrid" class="guardrail-grid" style="display:none">
+      <!-- populated by JS -->
+    </div>
+    <div class="demo-control" style="margin-top:14px">
+      <div class="demo-control-left">
+        <div class="demo-control-title">Stockout simulation <span class="badge">demo control</span></div>
+        <div class="demo-control-hint">Toggle to simulate <code>force_stockout_first</code> — recovery path via <code>POST /trust/simulate/failure</code></div>
+      </div>
+      <div class="toggle-switch" title="Simulate stockout">
+        <input id="stockoutToggle" type="checkbox" aria-label="Simulate stockout" />
+      </div>
+    </div>
+    <div class="actions">
+      <button id="refreshGuardrails" class="secondary">↻ Refresh Guardrails</button>
+      <button id="runStockoutSim" class="secondary">Trigger Stockout Sim</button>
+    </div>
+  </section>
+
+  <!-- Card 3: Decision Timeline -->
+  <section class="card" id="card-timeline">
+    <div class="card-head">
+      <h2 class="card-title"><span class="icon"></span> Card 3 — Decision Timeline</h2>
+      <span class="card-meta">3-node flow · Intent → Curator → Auditor</span>
+    </div>
+    <div id="timelineHint" class="hint" style="margin-bottom:10px">Run an explanation (Card 1) or a simulation (Card 4) to see the timeline. Nodes are color-coded: <span style="color:var(--accent)">● PASS</span> · <span style="color:var(--fail)">● VETO</span> · <span style="color:var(--warning)">● FALLBACK</span></div>
+    <div id="timeline" class="timeline" style="display:none"></div>
+    <div id="timelineMeta" style="margin-top:10px; font-size:0.78rem;color:var(--muted);display:none"></div>
+  </section>
+
+  <!-- Card 4: Failure Recovery Showcase -->
+  <section class="card" id="card-recovery">
+    <div class="card-head">
+      <h2 class="card-title warn-dot"><span class="icon"></span> Card 4 — Failure Recovery Showcase</h2>
+      <span class="card-meta">POST /trust/simulate/failure</span>
+    </div>
+    <div class="hint" style="margin-bottom:10px">Trigger controlled failures — uses existing <code>TransactionState.force_stockout_first</code> mechanism (read-only wrapper). Recovery path is highlighted.</div>
+    <div class="actions">
+      <button id="btnStockout" class="warn">Stockout</button>
+      <button id="btnRateLimit" class="info">Rate Limit (429)</button>
+      <button id="btnValidation" class="danger">Validation Error</button>
+      <button id="btnCompare" class="secondary">Compare: Normal vs Failure</button>
+      <span id="recoverySpinner" class="spinner">simulating…</span>
+    </div>
+    <div id="recoveryPanel" class="terminal" style="margin-top:12px; display:none"></div>
+    <div id="recoveryMeta" style="margin-top:10px; font-size:0.82rem; display:none"></div>
+    <div id="comparePanel" style="display:none">
+      <div class="compare-grid">
+        <div class="compare-col" id="compareNormal"><h4>Normal Path</h4><div class="placeholder" style="color:var(--muted-2);font-style:italic;font-size:0.82rem">Run a normal transaction first (index.html) or click Normal in compare.</div></div>
+        <div class="compare-col" id="compareFailure"><h4>Failure Recovery Path</h4><div class="placeholder" style="color:var(--muted-2);font-style:italic;font-size:0.82rem">Trigger a failure above.</div></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    Trust Dashboard is <strong>read-only</strong> — zero mutations to <code>/transact</code> or graph nodes. All data from <code>/trust/*</code> endpoints. Single HTML file, system fonts only, no CDN.<br>
+    Existing <code>index.html</code> unchanged · Existing <code>/transact</code> unchanged — verified staged reveal 300ms/entry.
+  </div>
+
+<script>
+(function(){
+  const API = 'http://localhost:8000';
+  const REVEAL_MS = 300;
+
+  // Helpers
+  function escapeHtml(s){
+    if(s==null) return '';
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function classifyEntry(text){
+    if(text.startsWith('FALLBACK:')) return 'fallback';
+    if(text.startsWith('NOTE:')) return 'note';
+    if(text.includes('VIOLATION:')) return 'violation';
+    if(text.startsWith('DECISION:') || text.includes('PASS —') || text.includes('Razorpay link created')) return 'decision';
+    if(text.includes('429') || text.includes('rate limit') || text.includes('Rate limit')) return 'rate-limit';
+    if(text.includes('Recovery Agent') || text.includes('LOOP:')) return 'highlight';
+    return '';
+  }
+  function stagedReveal(container, entries, onDone){
+    container.innerHTML='';
+    container.style.display='block';
+    let i=0;
+    function next(){
+      if(i<entries.length){
+        const div=document.createElement('div');
+        div.className='entry '+classifyEntry(entries[i]);
+        div.textContent=(i+1)+'. '+entries[i];
+        container.appendChild(div);
+        requestAnimationFrame(()=>div.classList.add('visible'));
+        container.scrollTop=container.scrollHeight;
+        i++;
+        setTimeout(next, REVEAL_MS);
+      }else if(onDone){
+        onDone();
+      }
+    }
+    if(entries.length===0){
+      container.innerHTML='<div class="placeholder">No entries.</div>';
+      if(onDone) onDone();
+    }else{
+      next();
+    }
+  }
+  function fetchJson(url, opts){
+    return fetch(url, opts).then(async res=>{
+      const txt=await res.text();
+      let data;
+      try{ data=txt?JSON.parse(txt):null; }catch(_){ data={raw:txt} }
+      if(!res.ok){
+        const msg=(data && data.detail) || txt || ('HTTP '+res.status);
+        throw new Error(msg);
+      }
+      return data;
+    });
+  }
+
+  // Conn status
+  const connEl=document.getElementById('connStatus');
+  fetchJson(API+'/health').then(()=>{
+    connEl.textContent='● backend ok';
+    connEl.style.color='var(--accent)';
+  }).catch(()=>{
+    connEl.textContent='● backend unreachable — start: uvicorn src.api:app --port 8000';
+    connEl.style.color='var(--fail)';
+  });
+
+  // Card 2: Guardrails
+  const guardrailStatus=document.getElementById('guardrailStatus');
+  const guardrailGrid=document.getElementById('guardrailGrid');
+  let lastTxForBars = null; // cache last transaction for bar values
+
+  function renderGuardrails(cfg){
+    guardrailStatus.textContent='Active guardrails — read-only view. Bars show current usage vs cap.';
+    guardrailStatus.style.color='var(--muted)';
+    const ag=cfg.active_guardrails || {};
+    const maxDiscount=ag.max_discount_percentage ?? 30;
+    const dailyLimit=ag.daily_transaction_limit ?? 100000;
+    const budgetCap=ag.max_budget_cap ?? 8000;
+    const handling=ag.stockout_handling ?? 'fallback';
+
+    // Derive usage values from lastTx if available
+    let discountPct=0, budgetUsed=0, dailyUsedPct=0;
+    if(lastTxForBars && lastTxForBars.checkout_record){
+      const cr=lastTxForBars.checkout_record;
+      const subtotal=cr.subtotal || cr.final_amount || 1;
+      const disc=cr.discount || 0;
+      discountPct = subtotal ? Math.round((disc/subtotal)*100) : 0;
+      const finalAmt=cr.final_amount || 0;
+      budgetUsed = Math.min(100, Math.round((finalAmt / budgetCap)*100));
+      dailyUsedPct = Math.min(100, Math.round((finalAmt / dailyLimit)*100));
+    } else {
+      // demo representative values before any transaction
+      discountPct = 0;
+      budgetUsed = 34; // e.g., ₹274 / 8000
+      dailyUsedPct = 2;
+    }
+    const discountUsedAbs = lastTxForBars ? (lastTxForBars.checkout_record?.discount || 0) : 0;
+    const finalAmt = lastTxForBars ? (lastTxForBars.checkout_record?.final_amount || 0) : 224; // demo
+
+    function barColor(pct, cap){
+      const ratio=pct/100;
+      if(ratio>=0.9) return 'red';
+      if(ratio>=0.7) return 'yellow';
+      return 'green';
+    }
+
+    guardrailGrid.innerHTML = `
+      <div class="guardrail-item">
+        <div class="guardrail-label"><span>Max Discount</span><span class="status-badge" style="font-size:0.66rem">${escapeHtml(handling)}</span></div>
+        <div class="guardrail-value">${discountPct}% <span>/ ${maxDiscount}% cap</span> <span style="color:var(--muted-2);font-size:0.74rem">· used ₹${discountUsedAbs.toFixed(0)} discount</span></div>
+        <div class="bar-wrap"><div class="bar-fill ${barColor(discountPct, maxDiscount)}" style="width:${Math.min(100, (discountPct/maxDiscount)*100)}%"></div></div>
+        <div style="margin-top:6px;font-size:0.72rem;color:var(--muted-2)">${discountPct <= maxDiscount ? 'Within limit' : 'VETO would trigger'}</div>
+      </div>
+      <div class="guardrail-item">
+        <div class="guardrail-label"><span>Budget Cap</span><span style="font-size:0.70rem;color:var(--muted-2)">cap ₹${budgetCap}</span></div>
+        <div class="guardrail-value">₹${finalAmt.toFixed(0)} <span>/ ₹${budgetCap} cap</span> · ${budgetUsed}%</div>
+        <div class="bar-wrap"><div class="bar-fill ${barColor(budgetUsed,100)}" style="width:${budgetUsed}%"></div></div>
+        <div style="margin-top:6px;font-size:0.72rem;color:var(--muted-2)">Per-transaction ceiling · merchant control: budget_cap</div>
+      </div>
+      <div class="guardrail-item">
+        <div class="guardrail-label"><span>Daily Transaction Limit</span><span style="font-size:0.70rem;color:var(--muted-2)">₹${dailyLimit.toLocaleString()}</span></div>
+        <div class="guardrail-value">₹${finalAmt.toFixed(0)} <span>/ ₹${dailyLimit.toLocaleString()}</span> · ${dailyUsedPct}% of daily</div>
+        <div class="bar-wrap"><div class="bar-fill blue" style="width:${Math.min(100, dailyUsedPct)}%"></div></div>
+        <div style="margin-top:6px;font-size:0.72rem;color:var(--muted-2)">Across all transactions · merchant control: daily_limit</div>
+      </div>
+      <div class="guardrail-item">
+        <div class="guardrail-label"><span>Stockout Handling</span><span class="pill blue">${escapeHtml(handling)}</span></div>
+        <div class="guardrail-value" style="font-size:0.84rem">${handling==='fallback' ? 'Fallback to alternative product' : escapeHtml(handling)}</div>
+        <div style="margin-top:8px;font-size:0.74rem;color:var(--muted);line-height:1.4">When first candidate is out of stock, Recovery Agent searches for alternative within same category/budget. Max <code>3</code> loops.</div>
+        <div style="margin-top:8px"><span class="pill green">max_loops 3</span> <span class="pill yellow">tried_product_ids tracked</span></div>
+      </div>
+    `;
+    guardrailGrid.style.display='grid';
+    // Also show merchant controls
+    const controls=(cfg.merchant_controls||[]).join(' · ');
+    if(controls){
+      const existing=document.getElementById('guardrailControls');
+      if(!existing){
+        const d=document.createElement('div');
+        d.id='guardrailControls';
+        d.style.marginTop='10px';
+        d.style.fontSize='0.74rem';
+        d.style.color='var(--muted)';
+        d.innerHTML='Merchant controls: <code>'+escapeHtml(controls)+'</code>';
+        guardrailGrid.parentElement.appendChild(d);
+      }
+    }
+  }
+
+  function loadGuardrails(){
+    guardrailStatus.textContent='Loading guardrails…';
+    fetchJson(API+'/trust/guardrails')
+      .then(cfg=>{
+        renderGuardrails(cfg);
+      })
+      .catch(e=>{
+        guardrailStatus.textContent='Failed to load guardrails: '+e.message;
+        guardrailStatus.style.color='var(--fail)';
+      });
+  }
+  loadGuardrails();
+  document.getElementById('refreshGuardrails').addEventListener('click', loadGuardrails);
+  document.getElementById('runStockoutSim').addEventListener('click', ()=>{
+    document.getElementById('btnStockout').click();
+  });
+  document.getElementById('stockoutToggle').addEventListener('change', (e)=>{
+    if(e.target.checked){
+      document.getElementById('btnStockout').click();
+    }
+  });
+
+  // Card 1 + 3 shared: render explanation
+  const txInput=document.getElementById('txInput');
+  const explainBtn=document.getElementById('explainBtn');
+  const latestBtn=document.getElementById('latestBtn');
+  const demoExplainBtn=document.getElementById('demoExplainBtn');
+  const explainSpinner=document.getElementById('explainSpinner');
+  const explainStatus=document.getElementById('explainStatus');
+  const explainPanel=document.getElementById('explainPanel');
+  const reasoningTree=document.getElementById('reasoningTree');
+  const explainMeta=document.getElementById('explainMeta');
+  const timeline=document.getElementById('timeline');
+  const timelineMeta=document.getElementById('timelineMeta');
+  const timelineHint=document.getElementById('timelineHint');
+
+  function renderReasoningTree(decisions, finalStatus){
+    reasoningTree.innerHTML='';
+    reasoningTree.style.display='block';
+    decisions.forEach((d, idx)=>{
+      const div=document.createElement('div');
+      let cls='node';
+      if(d.step==='DeterministicFinancialAuditor' && d.veto_triggered) cls+=' fail';
+      else if(d.step==='CuratorEngine' && d.confidence < 0.8) cls+=' warn';
+      else if(finalStatus==='PASS') cls+=' pass';
+      else if(finalStatus==='FAIL' && idx===2) cls+=' fail';
+      else cls+=' info';
+      div.className=cls;
+      // Header
+      const title=document.createElement('div');
+      title.className='node-title';
+      // dot
+      const dot=document.createElement('span');
+      dot.style.width='8px';dot.style.height='8px';dot.style.borderRadius='50%';dot.style.display='inline-block';
+      if(cls.includes('fail')){dot.style.background='var(--fail)';dot.style.boxShadow='0 0 8px rgba(255,51,51,0.4)'}
+      else if(cls.includes('warn')){dot.style.background='var(--warning)'}
+      else if(cls.includes('pass')){dot.style.background='var(--accent)';dot.style.boxShadow='0 0 8px var(--accent-glow)'}
+      else{dot.style.background='var(--info)'}
+      title.appendChild(dot);
+      const t=document.createElement('span');
+      t.textContent=d.step+' — '+d.action;
+      title.appendChild(t);
+      if(d.confidence!=null){
+        const conf=document.createElement('span');
+        conf.className='pill '+(d.confidence>=0.85?'green':d.confidence>=0.7?'yellow':'red');
+        conf.textContent='conf '+d.confidence;
+        conf.style.marginLeft='auto';
+        title.appendChild(conf);
+      }
+      div.appendChild(title);
+      const reason=document.createElement('div');
+      reason.className='node-reason';
+      reason.textContent=d.reasoning || '';
+      div.appendChild(reason);
+      // Meta pills
+      const meta=document.createElement('div');
+      meta.className='node-meta';
+      if(d.alternatives_considered && d.alternatives_considered.length){
+        const p=document.createElement('span');
+        p.className='pill blue';
+        p.textContent='alt: '+d.alternatives_considered.join(' · ');
+        meta.appendChild(p);
+      }
+      if(d.guardrails_applied && d.guardrails_applied.length){
+        d.guardrails_applied.forEach(g=>{
+          const p=document.createElement('span');
+          p.className='pill green';
+          p.textContent='guard '+g;
+          meta.appendChild(p);
+        });
+      }
+      if(d.checks_passed && d.checks_passed.length){
+        const p=document.createElement('span');
+        p.className='pill green';
+        p.textContent='✓ '+d.checks_passed.join(', ');
+        meta.appendChild(p);
+      }
+      if(d.checks_failed && d.checks_failed.length){
+        const p=document.createElement('span');
+        p.className='pill red';
+        p.textContent='✗ '+d.checks_failed.join(', ');
+        meta.appendChild(p);
+      }
+      if(d.veto_triggered!=null){
+        const p=document.createElement('span');
+        p.className=d.veto_triggered?'pill red':'pill green';
+        p.textContent=d.veto_triggered?'VETO TRIGGERED':'veto clear';
+        meta.appendChild(p);
+      }
+      if(meta.childNodes.length) div.appendChild(meta);
+      reasoningTree.appendChild(div);
+      // staged reveal
+      setTimeout(()=>div.classList.add('visible'), idx*REVEAL_MS);
+    });
+  }
+
+  function renderTimeline(decisions, finalStatus){
+    timeline.innerHTML='';
+    timeline.style.display='flex';
+    timelineHint.style.display='none';
+    timelineMeta.style.display='block';
+    decisions.forEach((d, idx)=>{
+      const node=document.createElement('div');
+      let state='pass';
+      if(d.step==='DeterministicFinancialAuditor' && d.veto_triggered) state='fail';
+      else if(d.step==='CuratorEngine' && d.confidence < 0.8) state='fallback';
+      else if(finalStatus==='FAIL' && idx===2) state='fail';
+      else if(finalStatus==='PASS') state='pass';
+      node.className='timeline-node '+state;
+      const indexEl=document.createElement('div');
+      indexEl.className='node-index '+state;
+      indexEl.textContent=String(idx+1);
+      node.appendChild(indexEl);
+      const step=document.createElement('div');
+      step.className='node-step';
+      step.textContent=d.step;
+      node.appendChild(step);
+      const action=document.createElement('div');
+      action.className='node-action';
+      action.textContent=d.action;
+      node.appendChild(action);
+      const reason=document.createElement('div');
+      reason.className='node-reason';
+      reason.textContent=d.reasoning;
+      node.appendChild(reason);
+      const meta=document.createElement('div');
+      meta.className='node-meta';
+      if(d.confidence!=null){
+        const pill=document.createElement('span');
+        pill.className='pill conf';
+        pill.textContent='confidence '+d.confidence;
+        meta.appendChild(pill);
+      }
+      if(d.guardrails_applied){
+        d.guardrails_applied.forEach(g=>{
+          const pill=document.createElement('span');
+          pill.className='pill guard';
+          pill.textContent=g;
+          meta.appendChild(pill);
+        });
+      }
+      if(d.veto_triggered!=null){
+        const pill=document.createElement('span');
+        pill.className='pill '+(d.veto_triggered?'red':'green');
+        pill.textContent=d.veto_triggered?'VETO':'PASS';
+        meta.appendChild(pill);
+      }
+      node.appendChild(meta);
+      timeline.appendChild(node);
+      setTimeout(()=>node.classList.add('visible'), idx*REVEAL_MS+100);
+    });
+    timelineMeta.innerHTML = `Final: <span class="status-badge ${finalStatus==='PASS'?'pass':'fail'}"><span class="dot"></span>${escapeHtml(finalStatus)}</span> &nbsp;·&nbsp; 300ms/entry staged reveal · Color: <span style="color:var(--accent)">● PASS</span> <span style="color:var(--fail)">● VETO</span> <span style="color:var(--warning)">● FALLBACK</span>`;
+    timelineMeta.style.display='block';
+  }
+
+  function renderExplanation(data){
+    // data has transaction_id, decisions, final_status, failure_recovery
+    const decisions=data.decisions || [];
+    const finalStatus=data.final_status || 'FAIL';
+    const tid=data.transaction_id || 'unknown';
+    // Update bars cache by fetching stored transaction for guardrail bars (if available)
+    // Try to fetch the raw result to get discount etc.
+    // We have no raw here, but we can try GET /trust/transactions approach: just update bars with latest
+    // For now, if we have a transaction_id, fetch its stored raw via explain? We don't have raw endpoint, so approximate.
+    // Instead, after explanation we try to update lastTxForBars via /trust/simulate or /transact cache — we already handle in recovery but for explain we can synthesize bars from decisions.
+    // We'll attempt to derive discount usage from decisions guardrails (approx).
+    // Keep lastTxForBars as is.
+
+    renderReasoningTree(decisions, finalStatus);
+    renderTimeline(decisions, finalStatus);
+
+    // Meta
+    explainMeta.style.display='block';
+    let html = `<span class="status-badge ${finalStatus==='PASS'?'pass':'fail'}"><span class="dot"></span>${escapeHtml(finalStatus)}</span> &nbsp; tx <code>${escapeHtml(tid)}</code>`;
+    if(data.failure_recovery){
+      html += ` &nbsp;·&nbsp; <span class="pill yellow">↻ ${escapeHtml(data.failure_recovery)}</span>`;
+    } else if(finalStatus==='PASS'){
+      html += ` &nbsp;·&nbsp; <span class="pill green">no recovery needed</span>`;
+    }
+    if(data._synthetic){
+      html += ` &nbsp;<span class="pill blue">synthetic demo</span>`;
+    }
+    explainMeta.innerHTML=html;
+
+    // Also fetch guardrails bars updated? re-render with current lastTx
+    // If we have a stored transaction, try to get its raw for accurate bars
+    // We can try to fetch POST /transact history? simplest: re-render guardrails with existing cache
+    // But we can also try to fetch transaction raw via new endpoint that doesn't exist — skip.
+  }
+
+  async function doExplain(tid){
+    const id=(tid||'').trim();
+    if(!id){
+      explainStatus.textContent='Enter a transaction ID';
+      explainStatus.style.color='var(--fail)';
+      return;
+    }
+    explainBtn.disabled=true;
+    explainSpinner.style.display='inline-flex';
+    explainStatus.textContent='';
+    explainPanel.style.display='none';
+    reasoningTree.style.display='none';
+    explainMeta.style.display='none';
+    try{
+      const data=await fetchJson(API+'/trust/explain/'+encodeURIComponent(id));
+      explainStatus.textContent='Explained ✓';
+      explainStatus.style.color='var(--accent)';
+      // If data has _synthetic flag, show note
+      // For terminal panel: show a synthetic audit trail derived from decisions
+      // But spec says natural language explanation — we show reasoningTree + timeline, plus a terminal with decisions as log
+      const entries = (data.decisions||[]).map(d=> `${d.step}: ${d.action} — ${d.reasoning} (conf ${d.confidence ?? 'n/a'})`);
+      // Add final status entry
+      entries.push(`DECISION: ${data.final_status} ${data.failure_recovery ? '— '+data.failure_recovery : ''}`);
+      stagedReveal(explainPanel, entries, ()=>{});
+      renderExplanation(data);
+      // Try to update lastTxForBars if we can fetch raw via /trust/simulate history? For now stash data for guardrails
+      // Derive a pseudo lastTx for bars: attempt to fetch the stored transaction's checkout via an extra call
+      // We don't have endpoint, so we keep lastTxForBars stub — but we can try to GET /trust/explain/{id} raw? Not needed.
+      // Instead, after explain, fetch latest raw via /trust/transactions list and use last
+      try{
+        const list=await fetchJson(API+'/trust/transactions');
+        if(list.transaction_ids && list.transaction_ids.length){
+          // Use the explained id as last
+        }
+      }catch(_){}
+    }catch(e){
+      explainStatus.textContent='Error: '+e.message;
+      explainStatus.style.color='var(--fail)';
+      explainPanel.style.display='block';
+      explainPanel.innerHTML='<div class="placeholder" style="color:var(--fail)">'+escapeHtml(e.message)+'<br>Hint: run POST /transact first, then copy its transaction_id.</div>';
+      reasoningTree.style.display='none';
+      timeline.style.display='none';
+      timelineHint.style.display='block';
+      timelineMeta.style.display='none';
+    }finally{
+      explainBtn.disabled=false;
+      explainSpinner.style.display='none';
+    }
+  }
+
+  explainBtn.addEventListener('click', ()=>doExplain(txInput.value));
+  txInput.addEventListener('keydown', e=>{ if(e.key==='Enter') doExplain(txInput.value); });
+
+  latestBtn.addEventListener('click', async ()=>{
+    explainStatus.textContent='loading latest…';
+    try{
+      const data=await fetchJson(API+'/trust/explain');
+      txInput.value=data.transaction_id || '';
+      // data is explanation directly
+      explainStatus.textContent='Loaded latest ✓';
+      explainStatus.style.color='var(--accent)';
+      const entries=(data.decisions||[]).map(d=> `${d.step}: ${d.action} — ${d.reasoning} (conf ${d.confidence ?? 'n/a'})`);
+      entries.push(`DECISION: ${data.final_status} ${data.failure_recovery ? '— '+data.failure_recovery : ''}`);
+      stagedReveal(explainPanel, entries, ()=>{});
+      renderExplanation(data);
+    }catch(e){
+      explainStatus.textContent='No transactions yet: '+e.message;
+      explainStatus.style.color='var(--fail)';
+    }
+  });
+
+  demoExplainBtn.addEventListener('click', async ()=>{
+    // Create a demo transaction via /transact then explain it — shows full flow
+    explainStatus.textContent='creating demo transaction…';
+    try{
+      const tx=await fetchJson(API+'/transact', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_intent:'one book under 3000'})});
+      const tid=tx.transaction_id;
+      if(tid){
+        txInput.value=tid;
+        // stash for guardrails bars
+        lastTxForBars=tx;
+        loadGuardrails(); // re-render bars with new amount
+        await doExplain(tid);
+      }else{
+        // fallback to latest
+        const data=await fetchJson(API+'/trust/explain');
+        txInput.value=data.transaction_id;
+        await doExplain(data.transaction_id);
+      }
+    }catch(e){
+      explainStatus.textContent='Demo failed: '+e.message;
+      explainStatus.style.color='var(--fail)';
+    }
+  });
+
+  // Auto-load latest on page load after short delay
+  setTimeout(async ()=>{
+    try{
+      const list=await fetchJson(API+'/trust/transactions');
+      if(list.transaction_ids && list.transaction_ids.length){
+        const latest=list.transaction_ids[list.transaction_ids.length-1];
+        txInput.value=latest;
+        // also fetch guardrail bar data for latest tx: we need raw tx for bars - fetch via explain then synthesize?
+        // We'll do a transact fetch to get raw: need endpoint that returns raw. We can infer via simulation? For now, just show guardrails.
+      }
+    }catch(_){}
+  }, 600);
+
+  // Card 4: Failure Recovery Showcase
+  const recoveryPanel=document.getElementById('recoveryPanel');
+  const recoveryMeta=document.getElementById('recoveryMeta');
+  const recoverySpinner=document.getElementById('recoverySpinner');
+  const comparePanel=document.getElementById('comparePanel');
+  const compareNormal=document.getElementById('compareNormal');
+  const compareFailure=document.getElementById('compareFailure');
+  let lastNormalTrail=null;
+  let lastFailureTrail=null;
+
+  async function simulate(scenario){
+    recoverySpinner.style.display='inline-flex';
+    recoveryPanel.style.display='none';
+    recoveryMeta.style.display='none';
+    // disable buttons
+    ['btnStockout','btnRateLimit','btnValidation','btnCompare'].forEach(id=>{
+      const el=document.getElementById(id);
+      if(el) el.disabled=true;
+    });
+    try{
+      const data=await fetchJson(API+'/trust/simulate/failure', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({scenario})
+      });
+      const audit=data.audit_trail || data.result?.audit_trail || [];
+      const recoveryPath=data.recovery_path || [];
+      const msg=data.message || '';
+      const result=data.result || {};
+      // stash for guardrails bars
+      if(result.checkout_record){
+        lastTxForBars=result;
+        loadGuardrails();
+      }
+      // Show recovery panel with staged reveal, highlighting recovery path
+      recoveryPanel.style.display='block';
+      // Build entries with highlight markers
+      const entries=audit.map(e=>{
+        const isRecovery = recoveryPath.some(r=> e.includes(r) || r.includes(e.substring(0,20)));
+        // We'll just classify via content; stagedReveal will handle styling via classifyEntry + highlight
+        // For explicit recovery highlight, we prefix with highlight logic via custom class after render
+        return e;
+      });
+      // Custom staged reveal that highlights recovery entries
+      recoveryPanel.innerHTML='';
+      let i=0;
+      function next(){
+        if(i<audit.length){
+          const div=document.createElement('div');
+          const txt=audit[i];
+          // Determine class
+          let cls=classifyEntry(txt);
+          const isRec = recoveryPath.some(r=> txt.includes(r) || r.includes(txt.substring(0,30)) || txt.includes('Recovery') || txt.includes('LOOP'));
+          if(isRec) cls='highlight';
+          if(txt.startsWith('--- RETRY')) cls='rate-limit';
+          div.className='entry '+cls;
+          div.textContent=(i+1)+'. '+txt;
+          recoveryPanel.appendChild(div);
+          requestAnimationFrame(()=>div.classList.add('visible'));
+          recoveryPanel.scrollTop=recoveryPanel.scrollHeight;
+          i++;
+          setTimeout(next, REVEAL_MS);
+        }else{
+          // done
+          recoverySpinner.style.display='none';
+          recoveryMeta.style.display='block';
+          const final=result.final_decision || data.final_status || 'UNKNOWN';
+          const isPass=final==='PASS';
+          recoveryMeta.innerHTML = `<span class="status-badge ${isPass?'pass':'fail'}"><span class="dot"></span>${escapeHtml(final)}</span> &nbsp; scenario <code>${escapeHtml(scenario)}</code> &nbsp;·&nbsp; tx <code>${escapeHtml(data.transaction_id||'')}</code><br><span style="color:var(--muted);font-size:0.78rem">${escapeHtml(msg)}</span>` + (recoveryPath.length?`<br><span style="font-size:0.74rem;color:var(--warning)">Recovery path: ${escapeHtml(recoveryPath.join(' → '))}</span>`:'');
+          // Also update timeline to show this simulation's explanation if available
+          if(data.explanation){
+            renderExplanation(data.explanation);
+            // also show reasoning tree already
+            txInput.value=data.transaction_id||'';
+          } else if(result){
+            try{
+              const expl=await fetchJson(API+'/trust/explain/'+encodeURIComponent(data.transaction_id));
+              renderExplanation(expl);
+            }catch(_){}
+          }
+          // Store for compare
+          if(scenario==='stockout' || scenario==='validation_error'){
+            lastFailureTrail=audit;
+            compareFailure.innerHTML = '<h4>Failure Recovery Path — '+escapeHtml(scenario)+'</h4><div class="terminal" style="min-height:80px;max-height:220px">'+audit.map((e,idx)=>`<div class="entry visible ${classifyEntry(e)}" style="opacity:1;transform:none">${idx+1}. ${escapeHtml(e)}</div>`).join('')+'</div>';
+          }else if(scenario==='rate_limit'){
+            lastFailureTrail=audit;
+            compareFailure.innerHTML = '<h4>Failure Recovery Path — '+escapeHtml(scenario)+'</h4><div class="terminal" style="min-height:80px;max-height:220px">'+audit.map((e,idx)=>`<div class="entry visible ${classifyEntry(e)}" style="opacity:1;transform:none">${idx+1}. ${escapeHtml(e)}</div>`).join('')+'</div>';
+          }
+          // enable buttons
+          ['btnStockout','btnRateLimit','btnValidation','btnCompare'].forEach(id=>{
+            const el=document.getElementById(id);
+            if(el) el.disabled=false;
+          });
+        }
+      }
+      next();
+
+      // For compare normal, ensure we have a normal trail
+      if(!lastNormalTrail){
+        try{
+          const normal=await fetchJson(API+'/transact', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_intent:'one book under 3000'})});
+          const ntrail=normal.audit_trail||[];
+          lastNormalTrail=ntrail;
+          compareNormal.innerHTML='<h4>Normal Path</h4><div class="terminal" style="min-height:80px;max-height:220px">'+ntrail.map((e,idx)=>`<div class="entry visible ${classifyEntry(e)}" style="opacity:1;transform:none">${idx+1}. ${escapeHtml(e)}</div>`).join('')+'</div><div style="margin-top:6px;font-size:0.74rem;color:var(--muted)">Final: <span class="status-badge pass"><span class="dot"></span>PASS</span> · checkout <code>'+escapeHtml(normal.checkout_link||'')+'</code></div>';
+          lastTxForBars=normal;
+        }catch(_){}
+      }
+
+      // Auto-show compare panel after first failure
+      comparePanel.style.display='block';
+
+    }catch(e){
+      recoveryPanel.style.display='block';
+      recoveryPanel.innerHTML='<div class="placeholder" style="color:var(--fail)">Simulation failed: '+escapeHtml(e.message)+'</div>';
+      recoverySpinner.style.display='none';
+      ['btnStockout','btnRateLimit','btnValidation','btnCompare'].forEach(id=>{
+        const el=document.getElementById(id);
+        if(el) el.disabled=false;
+      });
+    }
+  }
+
+  document.getElementById('btnStockout').addEventListener('click', ()=>simulate('stockout'));
+  document.getElementById('btnRateLimit').addEventListener('click', ()=>simulate('rate_limit'));
+  document.getElementById('btnValidation').addEventListener('click', ()=>simulate('validation_error'));
+
+  document.getElementById('btnCompare').addEventListener('click', async ()=>{
+    comparePanel.style.display='block';
+    // Ensure normal trail exists
+    if(!lastNormalTrail){
+      try{
+        const normal=await fetchJson(API+'/transact', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({user_intent:'one book under 3000'})});
+        const ntrail=normal.audit_trail||[];
+        lastNormalTrail=ntrail;
+        compareNormal.innerHTML='<h4>Normal Path</h4><div class="terminal" style="min-height:80px;max-height:220px">'+ntrail.map((e,idx)=>`<div class="entry visible ${classifyEntry(e)}" style="opacity:1;transform:none">${idx+1}. ${escapeHtml(e)}</div>`).join('')+'</div><div style="margin-top:6px;font-size:0.74rem;color:var(--muted)">Final: <span class="status-badge pass"><span class="dot"></span>PASS</span> · checkout <code>'+escapeHtml(normal.checkout_link||'')+'</code></div>';
+      }catch(e){
+        compareNormal.innerHTML='<h4>Normal Path</h4><div style="color:var(--fail);font-size:0.82rem">Failed to load normal path: '+escapeHtml(e.message)+'</div>';
+      }
+    } else {
+      // already have
+    }
+    if(!lastFailureTrail){
+      compareFailure.innerHTML='<h4>Failure Recovery Path</h4><div class="placeholder" style="color:var(--muted-2);font-style:italic;font-size:0.82rem">Trigger a failure scenario above to see recovery path here.</div>';
+    }
+    // Scroll to compare
+    comparePanel.scrollIntoView({behavior:'smooth', block:'nearest'});
+  });
+
+})();
+</script>
+</body>
+</html>

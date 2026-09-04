@@ -124,18 +124,26 @@ def policy_validator(
 def budget_validator(
     max_budget: float,
     checkout_record: CheckoutRecord | None,
+    min_budget: float = 0.0,
 ) -> tuple[bool, str | None]:
     """
-    Verify final_amount <= user_max_budget.
+    Verify final_amount <= user_max_budget and >= min_budget (if set).
 
-    WHY: User sets a hard ceiling. Even if product is valid, we must not
-    authorize spend beyond what the user explicitly approved.
+    WHY: User sets a hard ceiling (and optionally floor via "more than"/"at least").
+         Even if product is valid, we must not authorize spend outside approved range.
     """
     if not checkout_record:
         return False, "Missing checkout record for budget check"
 
     final_amount = round(checkout_record.final_amount, 2)
     budget = round(max_budget, 2)
+    min_b = round(min_budget, 2)
+
+    if min_b > 0 and final_amount < min_b:
+        return (
+            False,
+            f"Budget below minimum: final amount ₹{final_amount:.2f} < user min budget ₹{min_b:.2f}",
+        )
 
     if final_amount > budget:
         return (
@@ -188,8 +196,9 @@ def intent_alignment_validator(
             f"User intent implies single item but checkout has quantity {checkout_record.quantity}",
         )
 
-    # Check for explicit budget mentions in intent (e.g., "under 50000", "below 50k")
-    budget_matches = re.findall(r"(?:under|below|max|maximum|upto|up to)\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)", intent_lower)
+    # Check for explicit budget mentions in intent (e.g., "under 50000", "below 50k", "for 500")
+    # Use word boundaries to avoid "at" inside "mat" (e.g., "yoga mat 877" -> would wrongly extract 877)
+    budget_matches = re.findall(r"(?:\b(?:under|below|max|maximum|upto|up to|for|at|around|about|within|budget|price|cost)\b|less than|not more than)\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)", intent_lower)
     for match in budget_matches:
         mentioned_budget = float(match.replace(",", ""))
         if final_amount > mentioned_budget:
@@ -233,7 +242,7 @@ def run_all_validators(state: TransactionState) -> TransactionState:
         state.mark_violation(f"PolicyValidator: {reason}")
 
     # BudgetValidator
-    passed, reason = budget_validator(state.max_budget, state.checkout_record)
+    passed, reason = budget_validator(state.max_budget, state.checkout_record, getattr(state, "min_budget", 0.0))
     state.validation_results.budget_validator = passed
     if not passed:
         state.mark_violation(f"BudgetValidator: {reason}")

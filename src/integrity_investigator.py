@@ -45,7 +45,7 @@ def integrity_investigator(state: TransactionState) -> TransactionState:
         state.mark_violation(f"PolicyValidator: {reason}")
 
     # --- BudgetValidator ---
-    passed, reason = budget_validator(state.max_budget, state.checkout_record)
+    passed, reason = budget_validator(state.max_budget, state.checkout_record, getattr(state, "min_budget", 0.0))
     state.validation_results.budget_validator = passed
     if not passed:
         state.mark_violation(f"BudgetValidator: {reason}")

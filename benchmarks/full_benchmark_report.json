@@ -245,14 +245,14 @@
           "is_valid_ground_truth": false,
           "final_decision": "PASS",
           "reached_checkout_via_stub": true,
-          "checkout_link": "https://stub.example.com/plink/e841b1ed",
+          "checkout_link": "https://stub.example.com/plink/3a95a125",
           "amount_paise": 60720,
           "description": "Payment for Vitamins 68",
           "amount_conversion_correct": true,
           "all_validators_pass_at_checkout": true,
           "audit_trail_tail": [
             "generate_checkout: creating payment link for \u20b9607.20 (60720 paise) \u2014 Payment for Vitamins 68",
-            "generate_checkout: Razorpay link created \u2014 id=stub_plink_82eebdaf61e7 short_url=https://stub.example.com/plink/e841b1ed",
+            "generate_checkout: Razorpay link created \u2014 id=stub_plink_d73323e889b4 short_url=https://stub.example.com/plink/3a95a125",
             "DECISION: PASS \u2014 all validators passed, checkout link generated"
           ],
           "stub_calls": [
@@ -274,14 +274,14 @@
           "is_valid_ground_truth": false,
           "final_decision": "PASS",
           "reached_checkout_via_stub": true,
-          "checkout_link": "https://stub.example.com/plink/aac8de92",
+          "checkout_link": "https://stub.example.com/plink/0350c29e",
           "amount_paise": 786440,
           "description": "Payment for Smartphone 101",
           "amount_conversion_correct": true,
           "all_validators_pass_at_checkout": true,
           "audit_trail_tail": [
             "generate_checkout: creating payment link for \u20b97864.40 (786440 paise) \u2014 Payment for Smartphone 101",
-            "generate_checkout: Razorpay link created \u2014 id=stub_plink_1bf25b9aeeb3 short_url=https://stub.example.com/plink/aac8de92",
+            "generate_checkout: Razorpay link created \u2014 id=stub_plink_89ba8f5483b3 short_url=https://stub.example.com/plink/0350c29e",
             "DECISION: PASS \u2014 all validators passed, checkout link generated"
           ],
           "stub_calls": [
@@ -304,14 +304,14 @@
           "is_valid_ground_truth": false,
           "final_decision": "PASS",
           "reached_checkout_via_stub": true,
-          "checkout_link": "https://stub.example.com/plink/57c9fcf1",
+          "checkout_link": "https://stub.example.com/plink/71ee902c",
           "amount_paise": 786440,
           "description": "Payment for Smartphone 101",
           "amount_conversion_correct": true,
           "all_validators_pass_at_checkout": true,
           "audit_trail_tail": [
             "generate_checkout: creating payment link for \u20b97864.40 (786440 paise) \u2014 Payment for Smartphone 101",
-            "generate_checkout: Razorpay link created \u2014 id=stub_plink_963f7e192f5b short_url=https://stub.example.com/plink/57c9fcf1",
+            "generate_checkout: Razorpay link created \u2014 id=stub_plink_3b1f040a5d80 short_url=https://stub.example.com/plink/71ee902c",
             "DECISION: PASS \u2014 all validators passed, checkout link generated"
           ],
           "stub_calls": [
@@ -335,14 +335,14 @@
           "is_valid_ground_truth": false,
           "final_decision": "PASS",
           "reached_checkout_via_stub": true,
-          "checkout_link": "https://stub.example.com/plink/f60e8703",
+          "checkout_link": "https://stub.example.com/plink/b02b0a3b",
           "amount_paise": 32367,
           "description": "Payment for Fiction Novel 13",
           "amount_conversion_correct": true,
           "all_validators_pass_at_checkout": true,
           "audit_trail_tail": [
             "generate_checkout: creating payment link for \u20b9323.67 (32367 paise) \u2014 Payment for Fiction Novel 13",
-            "generate_checkout: Razorpay link created \u2014 id=stub_plink_3f2e805be7c5 short_url=https://stub.example.com/plink/f60e8703",
+            "generate_checkout: Razorpay link created \u2014 id=stub_plink_7005f9b4b8c6 short_url=https://stub.example.com/plink/b02b0a3b",
             "DECISION: PASS \u2014 all validators passed, checkout link generated"
           ],
           "stub_calls": [
@@ -363,14 +363,14 @@
           "is_valid_ground_truth": false,
           "final_decision": "PASS",
           "reached_checkout_via_stub": true,
-          "checkout_link": "https://stub.example.com/plink/8ed1393c",
+          "checkout_link": "https://stub.example.com/plink/db12e038",
           "amount_paise": 430065,
           "description": "Payment for Yoga Mat 95",
           "amount_conversion_correct": true,
           "all_validators_pass_at_checkout": true,
           "audit_trail_tail": [
             "generate_checkout: creating payment link for \u20b94300.65 (430065 paise) \u2014 Payment for Yoga Mat 95",
-            "generate_checkout: Razorpay link created \u2014 id=stub_plink_9ccb6cdd7fa5 short_url=https://stub.example.com/plink/8ed1393c",
+            "generate_checkout: Razorpay link created \u2014 id=stub_plink_3727a3363f5c short_url=https://stub.example.com/plink/db12e038",
             "DECISION: PASS \u2014 all validators passed, checkout link generated"
           ],
           "stub_calls": [
@@ -391,14 +391,14 @@
           "is_valid_ground_truth": false,
           "final_decision": "PASS",
           "reached_checkout_via_stub": true,
-          "checkout_link": "https://stub.example.com/plink/cc9455d1",
+          "checkout_link": "https://stub.example.com/plink/de7627a6",
           "amount_paise": 87037,
           "description": "Payment for Jacket 2",
           "amount_conversion_correct": true,
           "all_validators_pass_at_checkout": true,
           "audit_trail_tail": [
             "generate_checkout: creating payment link for \u20b9870.37 (87037 paise) \u2014 Payment for Jacket 2",
-            "generate_checkout: Razorpay link created \u2014 id=stub_plink_9844811f0bc2 short_url=https://stub.example.com/plink/cc9455d1",
+            "generate_checkout: Razorpay link created \u2014 id=stub_plink_ad9d307adcd4 short_url=https://stub.example.com/plink/de7627a6",
             "DECISION: PASS \u2014 all validators passed, checkout link generated"
           ],
           "stub_calls": [
@@ -419,14 +419,14 @@
           "is_valid_ground_truth": false,
           "final_decision": "PASS",
           "reached_checkout_via_stub": true,
-          "checkout_link": "https://stub.example.com/plink/bca1b7ec",
+          "checkout_link": "https://stub.example.com/plink/03561a66",
           "amount_paise": 87037,
           "description": "Payment for Jacket 2",
           "amount_conversion_correct": true,
           "all_validators_pass_at_checkout": true,
           "audit_trail_tail": [
             "generate_checkout: creating payment link for \u20b9870.37 (87037 paise) \u2014 Payment for Jacket 2",
-            "generate_checkout: Razorpay link created \u2014 id=stub_plink_7f15712150b2 short_url=https://stub.example.com/plink/bca1b7ec",
+            "generate_checkout: Razorpay link created \u2014 id=stub_plink_eb7e1891d269 short_url=https://stub.example.com/plink/03561a66",
             "DECISION: PASS \u2014 all validators passed, checkout link generated"
           ],
           "stub_calls": [
@@ -447,14 +447,14 @@
           "is_valid_ground_truth": false,
           "final_decision": "PASS",
           "reached_checkout_via_stub": true,
-          "checkout_link": "https://stub.example.com/plink/6f6c0b9a",
+          "checkout_link": "https://stub.example.com/plink/a7cab1f2",
           "amount_paise": 128727,
           "description": "Payment for Car Charger 89",
           "amount_conversion_correct": true,
           "all_validators_pass_at_checkout": true,
           "audit_trail_tail": [
             "generate_checkout: creating payment link for \u20b91287.27 (128727 paise) \u2014 Payment for Car Charger 89",
-            "generate_checkout: Razorpay link created \u2014 id=stub_plink_29ac5fa2d2aa short_url=https://stub.example.com/plink/6f6c0b9a",
+            "generate_checkout: Razorpay link created \u2014 id=stub_plink_0ec696db79d6 short_url=https://stub.example.com/plink/a7cab1f2",
             "DECISION: PASS \u2014 all validators passed, checkout link generated"
           ],
           "stub_calls": [
@@ -560,14 +560,14 @@
         "is_valid_ground_truth": false,
         "final_decision": "PASS",
         "reached_checkout_via_stub": true,
-        "checkout_link": "https://stub.example.com/plink/e841b1ed",
+        "checkout_link": "https://stub.example.com/plink/3a95a125",
         "amount_paise": 60720,
         "description": "Payment for Vitamins 68",
         "amount_conversion_correct": true,
         "all_validators_pass_at_checkout": true,
         "audit_trail_tail": [
           "generate_checkout: creating payment link for \u20b9607.20 (60720 paise) \u2014 Payment for Vitamins 68",
-          "generate_checkout: Razorpay link created \u2014 id=stub_plink_82eebdaf61e7 short_url=https://stub.example.com/plink/e841b1ed",
+          "generate_checkout: Razorpay link created \u2014 id=stub_plink_d73323e889b4 short_url=https://stub.example.com/plink/3a95a125",
           "DECISION: PASS \u2014 all validators passed, checkout link generated"
         ],
         "stub_calls": [
@@ -589,14 +589,14 @@
         "is_valid_ground_truth": false,
         "final_decision": "PASS",
         "reached_checkout_via_stub": true,
-        "checkout_link": "https://stub.example.com/plink/aac8de92",
+        "checkout_link": "https://stub.example.com/plink/0350c29e",
         "amount_paise": 786440,
         "description": "Payment for Smartphone 101",
         "amount_conversion_correct": true,
         "all_validators_pass_at_checkout": true,
         "audit_trail_tail": [
           "generate_checkout: creating payment link for \u20b97864.40 (786440 paise) \u2014 Payment for Smartphone 101",
-          "generate_checkout: Razorpay link created \u2014 id=stub_plink_1bf25b9aeeb3 short_url=https://stub.example.com/plink/aac8de92",
+          "generate_checkout: Razorpay link created \u2014 id=stub_plink_89ba8f5483b3 short_url=https://stub.example.com/plink/0350c29e",
           "DECISION: PASS \u2014 all validators passed, checkout link generated"
         ],
         "stub_calls": [
@@ -619,14 +619,14 @@
         "is_valid_ground_truth": false,
         "final_decision": "PASS",
         "reached_checkout_via_stub": true,
-        "checkout_link": "https://stub.example.com/plink/57c9fcf1",
+        "checkout_link": "https://stub.example.com/plink/71ee902c",
         "amount_paise": 786440,
         "description": "Payment for Smartphone 101",
         "amount_conversion_correct": true,
         "all_validators_pass_at_checkout": true,
         "audit_trail_tail": [
           "generate_checkout: creating payment link for \u20b97864.40 (786440 paise) \u2014 Payment for Smartphone 101",
-          "generate_checkout: Razorpay link created \u2014 id=stub_plink_963f7e192f5b short_url=https://stub.example.com/plink/57c9fcf1",
+          "generate_checkout: Razorpay link created \u2014 id=stub_plink_3b1f040a5d80 short_url=https://stub.example.com/plink/71ee902c",
           "DECISION: PASS \u2014 all validators passed, checkout link generated"
         ],
         "stub_calls": [
@@ -650,14 +650,14 @@
         "is_valid_ground_truth": false,
         "final_decision": "PASS",
         "reached_checkout_via_stub": true,
-        "checkout_link": "https://stub.example.com/plink/f60e8703",
+        "checkout_link": "https://stub.example.com/plink/b02b0a3b",
         "amount_paise": 32367,
         "description": "Payment for Fiction Novel 13",
         "amount_conversion_correct": true,
         "all_validators_pass_at_checkout": true,
         "audit_trail_tail": [
           "generate_checkout: creating payment link for \u20b9323.67 (32367 paise) \u2014 Payment for Fiction Novel 13",
-          "generate_checkout: Razorpay link created \u2014 id=stub_plink_3f2e805be7c5 short_url=https://stub.example.com/plink/f60e8703",
+          "generate_checkout: Razorpay link created \u2014 id=stub_plink_7005f9b4b8c6 short_url=https://stub.example.com/plink/b02b0a3b",
           "DECISION: PASS \u2014 all validators passed, checkout link generated"
         ],
         "stub_calls": [
@@ -678,14 +678,14 @@
         "is_valid_ground_truth": false,
         "final_decision": "PASS",
         "reached_checkout_via_stub": true,
-        "checkout_link": "https://stub.example.com/plink/8ed1393c",
+        "checkout_link": "https://stub.example.com/plink/db12e038",
         "amount_paise": 430065,
         "description": "Payment for Yoga Mat 95",
         "amount_conversion_correct": true,
         "all_validators_pass_at_checkout": true,
         "audit_trail_tail": [
           "generate_checkout: creating payment link for \u20b94300.65 (430065 paise) \u2014 Payment for Yoga Mat 95",
-          "generate_checkout: Razorpay link created \u2014 id=stub_plink_9ccb6cdd7fa5 short_url=https://stub.example.com/plink/8ed1393c",
+          "generate_checkout: Razorpay link created \u2014 id=stub_plink_3727a3363f5c short_url=https://stub.example.com/plink/db12e038",
           "DECISION: PASS \u2014 all validators passed, checkout link generated"
         ],
         "stub_calls": [
@@ -706,14 +706,14 @@
         "is_valid_ground_truth": false,
         "final_decision": "PASS",
         "reached_checkout_via_stub": true,
-        "checkout_link": "https://stub.example.com/plink/cc9455d1",
+        "checkout_link": "https://stub.example.com/plink/de7627a6",
         "amount_paise": 87037,
         "description": "Payment for Jacket 2",
         "amount_conversion_correct": true,
         "all_validators_pass_at_checkout": true,
         "audit_trail_tail": [
           "generate_checkout: creating payment link for \u20b9870.37 (87037 paise) \u2014 Payment for Jacket 2",
-          "generate_checkout: Razorpay link created \u2014 id=stub_plink_9844811f0bc2 short_url=https://stub.example.com/plink/cc9455d1",
+          "generate_checkout: Razorpay link created \u2014 id=stub_plink_ad9d307adcd4 short_url=https://stub.example.com/plink/de7627a6",
           "DECISION: PASS \u2014 all validators passed, checkout link generated"
         ],
         "stub_calls": [
@@ -734,14 +734,14 @@
         "is_valid_ground_truth": false,
         "final_decision": "PASS",
         "reached_checkout_via_stub": true,
-        "checkout_link": "https://stub.example.com/plink/bca1b7ec",
+        "checkout_link": "https://stub.example.com/plink/03561a66",
         "amount_paise": 87037,
         "description": "Payment for Jacket 2",
         "amount_conversion_correct": true,
         "all_validators_pass_at_checkout": true,
         "audit_trail_tail": [
           "generate_checkout: creating payment link for \u20b9870.37 (87037 paise) \u2014 Payment for Jacket 2",
-          "generate_checkout: Razorpay link created \u2014 id=stub_plink_7f15712150b2 short_url=https://stub.example.com/plink/bca1b7ec",
+          "generate_checkout: Razorpay link created \u2014 id=stub_plink_eb7e1891d269 short_url=https://stub.example.com/plink/03561a66",
           "DECISION: PASS \u2014 all validators passed, checkout link generated"
         ],
         "stub_calls": [
@@ -762,14 +762,14 @@
         "is_valid_ground_truth": false,
         "final_decision": "PASS",
         "reached_checkout_via_stub": true,
-        "checkout_link": "https://stub.example.com/plink/6f6c0b9a",
+        "checkout_link": "https://stub.example.com/plink/a7cab1f2",
         "amount_paise": 128727,
         "description": "Payment for Car Charger 89",
         "amount_conversion_correct": true,
         "all_validators_pass_at_checkout": true,
         "audit_trail_tail": [
           "generate_checkout: creating payment link for \u20b91287.27 (128727 paise) \u2014 Payment for Car Charger 89",
-          "generate_checkout: Razorpay link created \u2014 id=stub_plink_29ac5fa2d2aa short_url=https://stub.example.com/plink/6f6c0b9a",
+          "generate_checkout: Razorpay link created \u2014 id=stub_plink_0ec696db79d6 short_url=https://stub.example.com/plink/a7cab1f2",
           "DECISION: PASS \u2014 all validators passed, checkout link generated"
         ],
         "stub_calls": [

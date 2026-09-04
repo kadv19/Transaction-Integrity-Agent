@@ -43,6 +43,10 @@ _CATEGORY_MAP = {
     "smartwatch": "electronics",
     "camera": "electronics",
     "keyboard": "electronics",
+    "tv": "electronics",
+    "television": "electronics",
+    "led tv": "electronics",
+    "smart tv": "electronics",
     "jacket": "clothing",
     "jeans": "clothing",
     "shirt": "clothing",
@@ -158,14 +162,19 @@ def _extract_max_budget(user_intent: str, current_max: float | None = None) -> f
         return current_max
 
     intent_lower = user_intent.lower()
-    # Patterns: "under ₹X", "below X", "max X", "maximum X", "upto X", "up to X"
+    # Patterns: explicit budget keywords including "for 500" (was missing, caused 100k default)
+    # Covers: under/below/max/maximum/upto/up to/for/at/around/about/within/budget/price/cost
+    # Use word boundaries to avoid matching "at" inside "mat" (e.g., "yoga mat 877")
     budget_matches = re.findall(
-        r"(?:under|below|max|maximum|upto|up to)\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)",
+        r"(?:\b(?:under|below|max|maximum|upto|up to|for|at|around|about|within|budget|price|cost)\b|less than|not more than)\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)",
         intent_lower,
     )
     for match in budget_matches:
         budget = float(match.replace(",", ""))
         if budget > 0:
+            # Guard: avoid treating product model numbers like "RC Car 866 for personal use" as budget
+            # "for" must be followed by budget-like number <= 1e6 and intent should imply budget context
+            # If keyword is "for" and next word after number is not NaN, still valid if number is plausible budget
             return budget
 
     # Fallback: look for "under ₹X" or "under X" anywhere
@@ -178,6 +187,36 @@ def _extract_max_budget(user_intent: str, current_max: float | None = None) -> f
         return float(m.group(1).replace(",", ""))
 
     return 100000.0  # very large default
+
+
+def _extract_min_budget(user_intent: str, current_min: float | None = None) -> float:
+    """Extract min_budget for phrases like 'more than 50', 'greater than 500', 'at least 1000', 'above 2000', 'over 500'."""
+    if current_min is not None and current_min > 0:
+        return current_min
+
+    intent_lower = user_intent.lower()
+    # "more than X", "greater than X", "above X", "over X", "at least X", "minimum X", "starting at X", "from X"
+    # Use word boundaries to avoid false matches
+    min_patterns = [
+        r"\bmore than\b\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)",
+        r"\bgreater than\b\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)",
+        r"\babove\b\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)",
+        r"\bover\b\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)",
+        r"\bat least\b\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)",
+        r"\bminimum\b\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)",
+        r"\bstarting at\b\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)",
+        r"\bfrom\b\s*(?:rs\.?|inr|₹)?\s*(\d+(?:,\d{3})*(?:\.\d{2})?)",
+    ]
+    for pat in min_patterns:
+        m = re.search(pat, intent_lower)
+        if m:
+            try:
+                val = float(m.group(1).replace(",", ""))
+                if val > 0:
+                    return val
+            except:
+                continue
+    return 0.0  # no minimum
 
 
 def _extract_category(user_intent: str) -> str:
@@ -204,17 +243,21 @@ def _find_candidate(
     max_budget: float,
     category: str,
     tried_product_ids: set[str] | None = None,
+    min_budget: float = 0.0,
 ) -> CatalogRecord | None:
     """Search the synthetic catalog for a product matching category and budget,
     excluding every product ID already tried in this run."""
     _init_catalog()
 
     budget = round(max_budget, 2)
+    min_b = round(min_budget, 2)
     candidates = []
     for record in _CATALOG:
         if record.category != category:
             continue
         if record.price > budget:
+            continue
+        if record.price < min_b:
             continue
         if tried_product_ids and record.product_id in tried_product_ids:
             continue

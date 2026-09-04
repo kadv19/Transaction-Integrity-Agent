@@ -17,6 +17,7 @@ from src.catalog import (
     _init_catalog,
     _extract_category,
     _extract_max_budget,
+    _extract_min_budget,
     _find_candidate,
 )
 from synthetic_data import (
@@ -31,13 +32,15 @@ def buyer_agent(state: TransactionState) -> TransactionState:
     """Select a product candidate and write the proposal into state."""
     user_intent = state.user_intent
     max_budget = _extract_max_budget(user_intent, state.max_budget)
+    min_budget = _extract_min_budget(user_intent, state.min_budget)
     state.max_budget = max_budget
+    state.min_budget = min_budget
     category = _extract_category(user_intent)
 
     # Search for a candidate, excluding products already tried in this run
     tried = set(state.tried_product_ids) if state.tried_product_ids else set()
 
-    candidate = _find_candidate(max_budget, category, tried)
+    candidate = _find_candidate(max_budget, category, tried, min_budget=min_budget)
 
     if candidate is None:
         # No new candidate found — mark failure
@@ -65,10 +68,11 @@ def buyer_agent(state: TransactionState) -> TransactionState:
     state.policy_record = policy
 
     # Append audit trail entry
+    budget_str = f"₹{max_budget:.2f}" if min_budget == 0 else f"₹{min_budget:.2f}-₹{max_budget:.2f}"
     audit_entry = (
         f"Buyer Agent: picked '{candidate.name}' "
         f"(category={candidate.category}, price=₹{candidate.price:.2f}, "
-        f"budget=₹{max_budget:.2f}) for intent: '{user_intent}'"
+        f"budget={budget_str}) for intent: '{user_intent}'"
     )
     state.append_audit(audit_entry)
 
