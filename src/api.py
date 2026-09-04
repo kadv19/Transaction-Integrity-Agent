@@ -18,6 +18,7 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from src.catalog import _CATALOG, _init_catalog
 from src.graph import build_graph
 from src.razorpay_client import LiveRazorpayClient, StubRazorpayClient
 from src.state import TransactionState, ValidationResults
@@ -181,6 +182,53 @@ def _execute(user_intent: str, force_stockout_first: bool, razorpay_client) -> d
     result_raw = compiled.invoke(initial_state)
     serialized = _serialize_result(result_raw)
     return serialized
+
+
+@app.get("/catalog")
+async def get_catalog():
+    """Read-only catalog discovery for AI buyers.
+
+    Returns the full synthetic catalog (all 120 products) as a JSON array.
+    Each item exposes only the public merchant fields:
+    {product_id, name, price, currency, category}.
+    No pagination needed at this size. Does not mutate any state — the
+    underlying _CATALOG is initialized once (idempotent) and then served
+    as detached copies.
+    """
+    _init_catalog()
+    return [
+        {
+            "product_id": r.product_id,
+            "name": r.name,
+            "price": r.price,
+            "currency": r.currency,
+            "category": r.category,
+        }
+        for r in _CATALOG
+    ]
+
+
+@app.get("/.well-known/agent.json")
+async def agent_descriptor():
+    """Machine-readable descriptor for AI shopping agents.
+
+    Honestly scoped: describes only what this demo merchant actually
+    implements (catalog discovery + bounded transaction with audit trail).
+    No claimed compliance with external protocols (UCP/ACP/AP2) that are
+    not implemented.
+    """
+    return {
+        "name": "Transaction Integrity Agent — Demo Merchant",
+        "description": "Demo merchant for the Transaction Integrity Agent — exposes a read-only synthetic catalog and a bounded transaction endpoint with deterministic validation and full audit trail.",
+        "catalog_url": "http://localhost:8000/catalog",
+        "transact_url": "http://localhost:8000/transact",
+        "transact_method": "POST",
+        "transact_schema": {
+            "user_intent": "string",
+            "force_stockout_first": "boolean (optional, demo only)",
+        },
+        "capabilities": ["catalog_discovery", "bounded_transaction", "audit_trail"],
+    }
 
 
 @app.get("/")
