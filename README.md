@@ -268,10 +268,10 @@ Test-mode limit: Razorpay caps `payment_link` at 30 in test. Our code cancels af
 ## Phases — How It Was Built
 
 * **Phase 1 — Deterministic core:** `src/state.py` + `src/validators.py` + `data/scenarios.json` — benchmark before agents.
-* **Phase 2 — Agentic orchestration:** `src/catalog.py` + `src/buyer_agent.py` + `src/recovery_agent.py` + `src/graph.py` + `database.py` mock.
+* **Phase 2 — Agentic orchestration:** `src/catalog.py` + `src/buyer_agent.py` + `src/recovery_agent.py` + `src/graph.py` — bounded recovery loop + synthetic catalog.
 * **Phase 3 — Safety benchmark:** `benchmarks/run_full_benchmark.py` → 0/0 invariants, gap docs.
 * **Phase 4 — Live demo:** `src/api.py` live→stub, `frontend/index.html` staged reveal, `docs/demo_script.md`.
-* **Track 01 — Catalog discoverability:** `GET /catalog` + `GET /.well-known/agent.json` (this commit).
+* **Track 01 — Catalog discoverability:** `GET /catalog` + `GET /.well-known/agent.json`.
 
 Every phase was benchmarked before the next — nothing is a black box.
 
@@ -282,14 +282,6 @@ Every phase was benchmarked before the next — nothing is a black box.
 * Prototype `Trust Dashboard` + `opportunity network` (cross-merchant, strict consent) were **held back** — prototyped on `feature/phase10-trust-dashboard` but not merged to keep the submission fully verified.
 * No false UCP/ACP/AP2 compliance — descriptor `src/api.py:213` says only what exists.
 * LLM is **advisory only** — it never decides `PASS`/`FAIL`.
-
----
-
-## Contributors
-
-* **P2** — Agentic orchestration (Advaith, Vaibhav)
-* **P3** — Safety benchmark & routing verification (Arjun, Vaibhav)
-* **P4** — Live demo API + frontend + script (Advaith)
 
 ---
 
